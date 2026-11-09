@@ -40,7 +40,7 @@
   .label {
     @apply block text-sm font-medium text-gray-700 mb-1;
   }
-  .card {
-    @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6;
-  }
+.card {
+  @apply bg-white rounded-xl shadow-sm border border-gray-200 p-5 transition-all duration-200;
+}
 }

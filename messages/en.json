@@ -1,246 +1,167 @@
 {
-    "nav":  {
-                "home":  "Home",
-                "about":  "About",
-                "contact":  "Contact",
-                "login":  "Login",
-                "dashboard":  "Dashboard",
-                "logout":  "Logout"
-            },
-    "home":  {
-                 "heroBadge":  "Modern Stove Technology",
-                 "heroTitle1":  "Modern Stoves",
-                 "heroTitle2":  "Economical \u0026 Safe",
-                 "heroDesc":  "Reduce electricity and firewood consumption to save money. Locally manufactured, quality guaranteed.",
-                 "orderNow":  "Order Now",
-                 "learnMore":  "Learn More",
-                 "stats":  {
-                               "customers":  "Happy Customers",
-                               "years":  "Years Experience",
-                               "branches":  "Branches",
-                               "satisfaction":  "Customer Satisfaction"
-                           },
-                 "featuresTitle":  "Why Grum Stove?",
-                 "featuresSubtitle":  "Discover what makes our products special",
-                 "features":  {
-                                  "electric":  {
-                                                   "title":  "Low Electricity",
-                                                   "desc":  "Significantly reduces the electricity consumed by the stove."
-                                               },
-                                  "firewood":  {
-                                                   "title":  "Firewood Saving",
-                                                   "desc":  "Uses half the firewood compared to traditional stoves."
-                                               },
-                                  "safe":  {
-                                               "title":  "Safety Guaranteed",
-                                               "desc":  "Manufactured with high quality, meeting national quality standards."
-                                           },
-                                  "delivery":  {
-                                                   "title":  "Fast Delivery",
-                                                   "desc":  "Fast delivery in Addis Ababa and nearby areas."
-                                               }
-                              },
-                 "productsTitle":  "Our Products",
-                 "productsSubtitle":  "Choose what fits your home",
-                 "products":  {
-                                  "electricStove":  {
-                                                        "name":  "Grum Electric Stove",
-                                                        "tag":  "Best Seller",
-                                                        "desc":  "Modern electric stove â€” high heat with ease.",
-                                                        "price":  "ETB 4,500"
-                                                    },
-                                  "firewoodStove":  {
-                                                        "name":  "Grum Firewood Saving Stove",
-                                                        "tag":  "New",
-                                                        "desc":  "Traditional taste with modern efficiency.",
-                                                        "price":  "ETB 2,500"
-                                                    },
-                                  "halfStove":  {
-                                                    "name":  "Grum Half Stove",
-                                                    "tag":  "Popular",
-                                                    "desc":  "Versatile cooking stove â€” for home and business.",
-                                                    "price":  "ETB 1,800"
-                                                }
-                              },
-                 "whyTitle":  "Why Choose Us?",
-                 "whyItems":  {
-                                  "local":  "Locally manufactured â€” quality guaranteed",
-                                  "warranty":  "2-year warranty",
-                                  "freeDelivery":  "Free home delivery and installation",
-                                  "afterSales":  "After-sales maintenance service",
-                                  "affordable":  "Affordable price and easy payment",
-                                  "expert":  "Expert advice and support"
-                              },
-                 "ctaTitle":  "Order Today!",
-                 "ctaDesc":  "Special discount and free delivery for the first 50 customers.",
-                 "ctaButton":  "Contact Us Now",
-                 "finalTitle":  "Ready?",
-                 "finalDesc":  "Contact us today and learn more about our products.",
-                 "finalButton":  "Contact Us"
-             },
-    "about":  {
-                  "title":  "About Us",
-                  "subtitle":  "Learn about the history and mission of Grum Stove.",
-                  "storyTitle":  "Our Story",
-                  "storyP1":  "Grum Stove was founded in 2014 with the goal of transforming the traditional stoves used by Ethiopian families into modern, economical and safe products.",
-                  "storyP2":  "Starting from a small workshop, we have grown into a company with 4 branches in Addis Ababa and nearby areas. By serving thousands of customers, we have become a trusted name in the local market.",
-                  "storyP3":  "We continue to prioritize our customers needs by offering quality products at affordable prices.",
-                  "stats":  {
-                                "founded":  "Founded",
-                                "customers":  "Customers",
-                                "branches":  "Branches",
-                                "employees":  "Employees"
-                            },
-                  "mission":  "Mission",
-                  "missionDesc":  "To improve the living standards of Ethiopian families by providing modern, economical and safe stoves at affordable prices.",
-                  "vision":  "Vision",
-                  "visionDesc":  "To become the leading stove manufacturer in Ethiopia by 2020 and expand to the African market.",
-                  "valuesTitle":  "Our Values",
-                  "valuesSubtitle":  "The principles that guide our work",
-                  "values":  {
-                                 "quality":  {
-                                                 "title":  "Quality",
-                                                 "desc":  "We always put quality first."
-                                             },
-                                 "customer":  {
-                                                  "title":  "Customer First",
-                                                  "desc":  "We always respect our customers needs."
-                                              },
-                                 "honesty":  {
-                                                 "title":  "Honesty",
-                                                 "desc":  "We stand by our promises."
-                                             },
-                                 "innovation":  {
-                                                    "title":  "Innovation",
-                                                    "desc":  "We always bring new technology."
-                                                }
-                             }
-              },
-    "contact":  {
-                    "title":  "Contact Us",
-                    "subtitle":  "Have a question? Use the following ways to reach us.",
-                    "phone":  "Phone",
-                    "email":  "Email",
-                    "address":  "Address",
-                    "addressValue":  "Addis Ababa, Ethiopia",
-                    "addressDetail":  "Bole Sub-city",
-                    "hours":  "Working Hours",
-                    "hoursValue":  "Monday - Saturday",
-                    "hoursDetail":  "2:00 - 11:30 (LT)",
-                    "formTitle":  "Send a Message",
-                    "formDesc":  "Fill out the form, we will reach out to you as soon as possible.",
-                    "form":  {
-                                 "name":  "Full Name",
-                                 "phone":  "Phone Number",
-                                 "email":  "Email",
-                                 "message":  "Message",
-                                 "namePlaceholder":  "Your full name",
-                                 "phonePlaceholder":  "0912345678",
-                                 "emailPlaceholder":  "you@example.com",
-                                 "messagePlaceholder":  "Write your message...",
-                                 "submit":  "Send Message",
-                                 "successTitle":  "Your message has been sent!",
-                                 "successDesc":  "We will reach out to you as soon as possible."
-                             }
-                },
-    "footer":  {
-                   "tagline":  "We manufacture and sell modern electric and firewood-saving stoves.",
-                   "quickLinks":  "Quick Links",
-                   "contactUs":  "Contact Us",
-                   "rights":  "All rights reserved."
-               },
-    "common":  {
-                   "loading":  "Loading...",
-                   "language":  "Language",
-                   "amharic":  "áŠ áˆ›áˆ­áŠ›",
-                   "english":  "English"
-               },
-    "auth":  {
-                 "login":  {
-                               "title":  "Welcome Back",
-                               "subtitle":  "Sign in to your Grum Stove account",
-                               "phone":  "Phone Number",
-                               "phonePlaceholder":  "0912345678",
-                               "password":  "Password",
-                               "passwordPlaceholder":  "••••••",
-                               "rememberMe":  "Remember me",
-                               "forgotPassword":  "Forgot password?",
-                               "submit":  "Sign In",
-                               "submitting":  "Signing in...",
-                               "noAccount":  "Don\u0027t have an account?",
-                               "register":  "Register",
-                               "success":  "Successfully logged in",
-                               "error":  "Login failed"
-                           },
-                 "register":  {
-                                  "title":  "Create New Account",
-                                  "subtitle":  "Become a member of Grum Stove system",
-                                  "fullName":  "Full Name",
-                                  "fullNamePlaceholder":  "Your full name",
-                                  "phone":  "Phone Number",
-                                  "phonePlaceholder":  "0912345678",
-                                  "email":  "Email (Optional)",
-                                  "emailPlaceholder":  "you@example.com",
-                                  "password":  "Password",
-                                  "passwordPlaceholder":  "At least 6 characters",
-                                  "confirmPassword":  "Confirm Password",
-                                  "confirmPasswordPlaceholder":  "Re-enter your password",
-                                  "role":  "Role",
-                                  "roles":  {
-                                                "seller":  "Seller",
-                                                "customer":  "Customer",
-                                                "owner":  "Owner",
-                                                "admin":  "Admin"
-                                            },
-                                  "agreeTerms":  "I agree to the Terms of Service and Privacy Policy",
-                                  "submit":  "Register",
-                                  "submitting":  "Registering...",
-                                  "haveAccount":  "Already have an account?",
-                                  "login":  "Sign In",
-                                  "success":  "Successfully registered",
-                                  "error":  "Registration failed",
-                                  "passwordMismatch":  "Passwords do not match",
-                                  "termsRequired":  "You must accept the terms"
-                              },
-                 "forgotPassword":  {
-                                        "title":  "Forgot Password?",
-                                        "subtitle":  "Enter your phone number and we will send you a verification code",
-                                        "phone":  "Phone Number",
-                                        "phonePlaceholder":  "0912345678",
-                                        "submit":  "Send Code",
-                                        "submitting":  "Sending...",
-                                        "backToLogin":  "Back to Login",
-                                        "success":  "Verification code sent",
-                                        "error":  "Failed to send code",
-                                        "noAccount":  "Don\u0027t have an account?",
-                                        "register":  "Register"
-                                    },
-                 "resetPassword":  {
-                                       "title":  "Set New Password",
-                                       "subtitle":  "Enter your verification code and choose a new password",
-                                       "code":  "Verification Code",
-                                       "codePlaceholder":  "123456",
-                                       "newPassword":  "New Password",
-                                       "newPasswordPlaceholder":  "At least 6 characters",
-                                       "confirmPassword":  "Confirm Password",
-                                       "confirmPasswordPlaceholder":  "Re-enter the new password",
-                                       "submit":  "Change Password",
-                                       "submitting":  "Changing...",
-                                       "backToLogin":  "Back to Login",
-                                       "success":  "Password changed successfully",
-                                       "error":  "Password change failed",
-                                       "passwordMismatch":  "Passwords do not match"
-                                   },
-                 "validation":  {
-                                    "phoneRequired":  "Phone number is required",
-                                    "phoneInvalid":  "Enter a valid Ethiopian phone number",
-                                    "passwordRequired":  "Password is required",
-                                    "passwordMin":  "Password must be at least 6 characters",
-                                    "nameRequired":  "Full name is required",
-                                    "nameMin":  "Full name must be at least 2 characters",
-                                    "emailInvalid":  "Enter a valid email",
-                                    "codeRequired":  "Verification code is required",
-                                    "codeLength":  "Code must be 6 digits"
-                                }
-             }
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "contact": "Contact",
+    "login": "Login",
+    "dashboard": "Dashboard",
+    "inventory": "Inventory",
+    "products": "Products",
+    "orders": "Orders",
+    "receipts": "Receipts",
+    "analytics": "Analytics",
+    "branches": "Branches",
+    "employees": "Employees",
+    "logout": "Logout",
+    "expenses": "Expenses",
+    "revenue": "Revenue",
+    "reports": "Reports",
+    "users": "Users",
+    "notifications": "Notifications",
+    "activity": "Activity",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "sidebar": {
+    "main": "Main",
+    "finance": "Finance",
+    "management": "Management",
+    "other": "Other"
+  },
+  "home": {
+    "heroBadge": "Modern Stove Technology",
+    "heroTitle1": "Modern Stoves",
+    "heroTitle2": "Economical & Safe",
+    "heroDesc": "Reduce electricity and firewood consumption to save money. Locally manufactured, quality guaranteed.",
+    "orderNow": "Order Now",
+    "learnMore": "Learn More",
+    "stats": {
+      "customers": "Happy Customers",
+      "years": "Years Experience",
+      "branches": "Branches",
+      "satisfaction": "Customer Satisfaction"
+    },
+    "featuresTitle": "Why Grum Stove?",
+    "featuresSubtitle": "Discover what makes our products special",
+    "features": {
+      "electric": {
+        "title": "Low Electricity",
+        "desc": "Significantly reduces the electricity consumed by the stove."
+      },
+      "firewood": {
+        "title": "Firewood Saving",
+        "desc": "Uses half the firewood compared to traditional stoves."
+      },
+      "safe": {
+        "title": "Safety Guaranteed",
+        "desc": "Manufactured with high quality, meeting national quality standards."
+      },
+      "delivery": {
+        "title": "Fast Delivery",
+        "desc": "Fast delivery in Addis Ababa and nearby areas."
+      }
+    },
+    "productsTitle": "Our Products",
+    "productsSubtitle": "Choose what fits your home",
+    "products": {
+      "electricStove": {
+        "name": "Grum Electric Stove",
+        "tag": "Best Seller",
+        "desc": "Modern electric stove — high heat with ease.",
+        "price": "ETB 4,500"
+      },
+      "firewoodStove": {
+        "name": "Grum Firewood Saving Stove",
+        "tag": "New",
+        "desc": "Traditional taste with modern efficiency.",
+        "price": "ETB 2,500"
+      },
+      "halfStove": {
+        "name": "Grum Half Stove",
+        "tag": "Popular",
+        "desc": "Versatile cooking stove — for home and business.",
+        "price": "ETB 1,800"
+      }
+    },
+    "whyTitle": "Why Choose Us?",
+    "whyItems": {
+      "local": "Locally manufactured — quality guaranteed",
+      "warranty": "2-year warranty",
+      "freeDelivery": "Free home delivery and installation",
+      "afterSales": "After-sales maintenance service",
+      "affordable": "Affordable price and easy payment",
+      "expert": "Expert advice and support"
+    },
+    "ctaTitle": "Order Today!",
+    "ctaDesc": "Special discount and free delivery for the first 50 customers.",
+    "ctaButton": "Contact Us Now",
+    "finalTitle": "Ready?",
+    "finalDesc": "Contact us today and learn more about our products.",
+    "finalButton": "Contact Us"
+  },
+  "about": {
+    "title": "About Us",
+    "subtitle": "Learn about the history and mission of Grum Stove.",
+    "storyTitle": "Our Story",
+    "storyP1": "Grum Stove was founded in 2014 with the goal of transforming the traditional stoves used by Ethiopian families into modern, economical and safe products.",
+    "storyP2": "Starting from a small workshop, we have grown into a company with 4 branches in Addis Ababa and nearby areas. By serving thousands of customers, we have become a trusted name in the local market.",
+    "storyP3": "We continue to prioritize our customers needs by offering quality products at affordable prices.",
+    "stats": {
+      "founded": "Founded",
+      "customers": "Customers",
+      "branches": "Branches",
+      "employees": "Employees"
+    },
+    "mission": "Mission",
+    "missionDesc": "To improve the living standards of Ethiopian families by providing modern, economical and safe stoves at affordable prices.",
+    "vision": "Vision",
+    "visionDesc": "To become the leading stove manufacturer in Ethiopia by 2020 and expand to the African market.",
+    "valuesTitle": "Our Values",
+    "valuesSubtitle": "The principles that guide our work",
+    "values": {
+      "quality": { "title": "Quality", "desc": "We always put quality first." },
+      "customer": { "title": "Customer First", "desc": "We always respect our customers needs." },
+      "honesty": { "title": "Honesty", "desc": "We stand by our promises." },
+      "innovation": { "title": "Innovation", "desc": "We always bring new technology." }
+    }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Have a question? Use the following ways to reach us.",
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address",
+    "addressValue": "Addis Ababa, Ethiopia",
+    "addressDetail": "Bole Sub-city",
+    "hours": "Working Hours",
+    "hoursValue": "Monday - Saturday",
+    "hoursDetail": "2:00 - 11:30 (LT)",
+    "formTitle": "Send a Message",
+    "formDesc": "Fill out the form, we will reach out to you as soon as possible.",
+    "form": {
+      "name": "Full Name",
+      "phone": "Phone Number",
+      "email": "Email",
+      "message": "Message",
+      "namePlaceholder": "Your full name",
+      "phonePlaceholder": "0912345678",
+      "emailPlaceholder": "you@example.com",
+      "messagePlaceholder": "Write your message...",
+      "submit": "Send Message",
+      "successTitle": "Your message has been sent!",
+      "successDesc": "We will reach out to you as soon as possible."
+    }
+  },
+  "footer": {
+    "tagline": "We manufacture and sell modern electric and firewood-saving stoves.",
+    "quickLinks": "Quick Links",
+    "contactUs": "Contact Us",
+    "rights": "All rights reserved."
+  },
+  "common": {
+    "loading": "Loading...",
+    "language": "Language",
+    "amharic": "አማርኛ",
+    "english": "English"
+  }
 }

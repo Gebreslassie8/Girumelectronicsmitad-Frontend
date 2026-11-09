@@ -5,7 +5,28 @@
     "contact": "አግኙን",
     "login": "ይግቡ",
     "dashboard": "ዳሽቦርድ",
-    "logout": "ውጣ"
+    "inventory": "መጋዘን",
+    "products": "ምርቶች",
+    "orders": "ትዕዛዞች",
+    "receipts": "ደረሰኞች",
+    "analytics": "ትንተና",
+    "branches": "ቅርንጫፎች",
+    "employees": "ሠራተኞች",
+    "logout": "ውጣ",
+    "expenses": "ወጪዎች",
+    "revenue": "ገቢዎች",
+    "reports": "ሪፖርቶች",
+    "users": "ተጠቃሚዎች",
+    "notifications": "ማሳወቂያዎች",
+    "activity": "ታሪክ",
+    "profile": "መገለጫ",
+    "settings": "ቅንብሮች"
+  },
+  "sidebar": {
+    "main": "ዋና",
+    "finance": "ሂሳብ",
+    "management": "አስተዳደር",
+    "other": "ሌላ"
   },
   "home": {
     "heroBadge": "ዘመናዊ የምጣድ ቴክኖሎጂ",
@@ -142,93 +163,5 @@
     "language": "ቋንቋ",
     "amharic": "አማርኛ",
     "english": "English"
-  },
-  "auth": {
-    "login": {
-      "title": "እንኳን ደህና መጡ",
-      "subtitle": "ወደ ግሩም ምጣድ ስርዓት ለመግባት ይግቡ",
-      "phone": "ስልክ ቁጥር",
-      "phonePlaceholder": "0912345678",
-      "password": "ፓስወርድ",
-      "passwordPlaceholder": "••••••",
-      "rememberMe": "አስታውሰኝ",
-      "forgotPassword": "ፓስወርድ ረሳህ?",
-      "submit": "ግባ",
-      "submitting": "በመግባት ላይ...",
-      "noAccount": "አካውንት የለዎትም?",
-      "register": "ይመዝገቡ",
-      "success": "በተሳካ ሁኔታ ገብተዋል",
-      "error": "መግቢያ አልተሳካም"
-    },
-    "register": {
-      "title": "አዲስ አካውንት ይፍጠሩ",
-      "subtitle": "የግሩም ምጣድ ስርዓት አባል ይሁኑ",
-      "fullName": "ሙሉ ስም",
-      "fullNamePlaceholder": "ሙሉ ስምዎ",
-      "phone": "ስልክ ቁጥር",
-      "phonePlaceholder": "0912345678",
-      "email": "ኢሜይል (አማራጭ)",
-      "emailPlaceholder": "you@example.com",
-      "password": "ፓስወርድ",
-      "passwordPlaceholder": "ቢያንስ 6 ፊደል",
-      "confirmPassword": "ፓስወርድ ያረጋግጡ",
-      "confirmPasswordPlaceholder": "ፓስወርድዎን እንደገና ያስገቡ",
-      "role": "ሚና",
-      "roles": {
-        "seller": "ሻጭ",
-        "customer": "ደንበኛ",
-        "owner": "ባለቤት",
-        "admin": "አስተዳዳሪ"
-      },
-      "agreeTerms": "የአገልግሎት ውሎችን እና የግላዊነት መመሪያን ተቀብያለሁ",
-      "submit": "ተመዝገብ",
-      "submitting": "በመመዝገብ ላይ...",
-      "haveAccount": "አካውንት አለዎት?",
-      "login": "ግባ",
-      "success": "በተሳካ ሁኔታ ተመዝግበዋል",
-      "error": "ምዝገባ አልተሳካም",
-      "passwordMismatch": "ፓስወርዶቹ አይመሳሰሉም",
-      "termsRequired": "ውሎችን መቀበል ያስፈልጋል"
-    },
-    "forgotPassword": {
-      "title": "ፓስወርድ ረሳህ?",
-      "subtitle": "የስልክ ቁጥርዎን ያስገቡ፣ የማረጋገጫ ኮድ እንልክልዎታለን",
-      "phone": "ስልክ ቁጥር",
-      "phonePlaceholder": "0912345678",
-      "submit": "ኮድ ላክ",
-      "submitting": "በመላክ ላይ...",
-      "backToLogin": "ወደ መግቢያ ተመለስ",
-      "success": "የማረጋገጫ ኮድ ተልኳል",
-      "error": "ኮድ መላክ አልተሳካም",
-      "noAccount": "አካውንት የለዎትም?",
-      "register": "ይመዝገቡ"
-    },
-    "resetPassword": {
-      "title": "አዲስ ፓስወርድ ያዘጋጁ",
-      "subtitle": "የማረጋገጫ ኮድዎን ያስገቡ እና አዲስ ፓስወርድ ይምረጡ",
-      "code": "የማረጋገጫ ኮድ",
-      "codePlaceholder": "123456",
-      "newPassword": "አዲስ ፓስወርድ",
-      "newPasswordPlaceholder": "ቢያንስ 6 ፊደል",
-      "confirmPassword": "ፓስወርድ ያረጋግጡ",
-      "confirmPasswordPlaceholder": "አዲሱን ፓስወርድ እንደገና ያስገቡ",
-      "submit": "ፓስወርድ ቀይር",
-      "submitting": "በመቀየር ላይ...",
-      "backToLogin": "ወደ መግቢያ ተመለስ",
-      "success": "ፓስወርድ በተሳካ ሁኔታ ተቀይሯል",
-      "error": "ፓስወርድ መቀየር አልተሳካም",
-      "passwordMismatch": "ፓስወርዶቹ አይመሳሰሉም"
-    },
-    "validation": {
-      "phoneRequired": "ስልክ ቁጥር ያስፈልጋል",
-      "phoneInvalid": "ትክክለኛ የኢትዮጵያ ስልክ ቁጥር ያስገቡ",
-      "passwordRequired": "ፓስወርድ ያስፈልጋል",
-      "passwordMin": "ፓስወርድ ቢያንስ 6 ፊደል መሆን አለበት",
-      "nameRequired": "ሙሉ ስም ያስፈልጋል",
-      "nameMin": "ሙሉ ስም ቢያንስ 2 ፊደል መሆን አለበት",
-      "emailInvalid": "ትክክለኛ ኢሜይል ያስገቡ",
-      "codeRequired": "የማረጋገጫ ኮድ ያስፈልጋል",
-      "codeLength": "ኮዱ 6 አሃዝ መሆን አለበት"
-    }
   }
 }

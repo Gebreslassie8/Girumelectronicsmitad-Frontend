@@ -6,8 +6,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { Phone, Lock, Eye, EyeOff, LogIn } from 'lucide-react';
+import { Phone, Lock, Eye, EyeOff, LogIn, Sparkles } from 'lucide-react';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { DEMO_ACCOUNTS } from '@/lib/mockAuth';
+import toast from 'react-hot-toast';
 
 export default function LoginPage() {
   const t = useTranslations('auth.login');
@@ -21,7 +23,9 @@ export default function LoginPage() {
     password: z.string().min(6, tv('passwordMin')),
   });
 
-  const { register, handleSubmit, formState: { errors } } = useForm({ resolver: zodResolver(schema) });
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm({
+    resolver: zodResolver(schema),
+  });
 
   const onSubmit = async (data) => {
     setLoading(true);
@@ -32,11 +36,44 @@ export default function LoginPage() {
     }
   };
 
+  const fillDemo = (account) => {
+    setValue('phone', account.phone);
+    setValue('password', account.password);
+    toast.success(`${account.icon} ${account.label} ተመርጧል — ግባ ይጫኑ`, { duration: 2000 });
+  };
+
   return (
     <div>
-      <div className="mb-8">
+      <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-800 mb-2">{t('title')}</h1>
         <p className="text-gray-600">{t('subtitle')}</p>
+      </div>
+
+      {/* Demo Accounts */}
+      <div className="mb-6 p-4 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100">
+        <div className="flex items-center gap-2 mb-3">
+          <Sparkles size={16} className="text-brand" />
+          <p className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
+            Demo Accounts
+          </p>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          {DEMO_ACCOUNTS.map((acc) => (
+            <button
+              key={acc.role}
+              type="button"
+              onClick={() => fillDemo(acc)}
+              className={`flex flex-col items-center gap-1 p-2.5 rounded-lg border-2 ${acc.color} hover:scale-105 transition text-center`}
+            >
+              <span className="text-xl">{acc.icon}</span>
+              <span className="text-xs font-semibold">{acc.label}</span>
+              <span className="text-[9px] opacity-70">{acc.phone}</span>
+            </button>
+          ))}
+        </div>
+        <p className="text-[10px] text-gray-500 mt-2 text-center">
+          ሚና ለመምረጥ ይጫኑ — ስልክ እና ፓስወርድ በራስ-ሰር ይሞላሉ
+        </p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">

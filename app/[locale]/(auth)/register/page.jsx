@@ -16,13 +16,13 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // ✅ ሚና ተወግዷል — ሁልጊዜ customer
   const schema = z.object({
     fullName: z.string().min(2, tv('nameMin')),
     phone: z.string().regex(/^(\+251|0)9\d{8}$/, tv('phoneInvalid')),
     email: z.string().email(tv('emailInvalid')).optional().or(z.literal('')),
     password: z.string().min(6, tv('passwordMin')),
     confirmPassword: z.string(),
-    role: z.enum(['admin', 'owner', 'seller', 'customer']),
     agreeTerms: z.boolean().refine((v) => v, { message: t('termsRequired') }),
   }).refine((data) => data.password === data.confirmPassword, {
     message: t('passwordMismatch'),
@@ -31,14 +31,15 @@ export default function RegisterPage() {
 
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: { role: 'seller', agreeTerms: false },
+    defaultValues: { agreeTerms: false },
   });
 
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      const { confirmPassword, agreeTerms, ...payload } = data;
-      await signup(payload);
+      const { confirmPassword, agreeTerms, ...rest } = data;
+      // ✅ ሚና ሁልጊዜ customer ነው
+      await signup({ ...rest, role: 'customer' });
     } catch (_) {} finally {
       setLoading(false);
     }
@@ -142,21 +143,6 @@ export default function RegisterPage() {
             />
           </div>
           {errors.confirmPassword && <p className="text-sm text-red-600 mt-1">{errors.confirmPassword.message}</p>}
-        </div>
-
-        {/* Role */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">{t('role')}</label>
-          <select
-            {...register('role')}
-            className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand bg-white"
-          >
-            <option value="seller">{t('roles.seller')}</option>
-            <option value="customer">{t('roles.customer')}</option>
-            <option value="owner">{t('roles.owner')}</option>
-            <option value="admin">{t('roles.admin')}</option>
-          </select>
-          {errors.role && <p className="text-sm text-red-600 mt-1">{errors.role.message}</p>}
         </div>
 
         {/* Terms */}
