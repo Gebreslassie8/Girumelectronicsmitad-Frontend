@@ -1,0 +1,234 @@
+{
+  "nav": {
+    "home": "መነሻ",
+    "about": "ስለ እኛ",
+    "contact": "አግኙን",
+    "login": "ይግቡ",
+    "dashboard": "ዳሽቦርድ",
+    "logout": "ውጣ"
+  },
+  "home": {
+    "heroBadge": "ዘመናዊ የምጣድ ቴክኖሎጂ",
+    "heroTitle1": "ዘመናዊ ምጣድ",
+    "heroTitle2": "ቆጣቢ እና ደህንነቱ የተጠበቀ",
+    "heroDesc": "የኤሌክትሪክ እና ማገዶ ፍጆታን በመቀነስ ገንዘብዎን ይቆጥቡ። በአገር ውስጥ የተመረተ፣ ጥራቱ የተረጋገጠ።",
+    "orderNow": "ይዘዙ",
+    "learnMore": "ተጨማሪ ይወቁ",
+    "stats": {
+      "customers": "ደስተኛ ደንበኞች",
+      "years": "ዓመታት ልምድ",
+      "branches": "ቅርንጫፎች",
+      "satisfaction": "የደንበኛ እርካታ"
+    },
+    "featuresTitle": "ለምን ግሩም ምጣድ?",
+    "featuresSubtitle": "ምርጫችን ልዩ የሚያደርገው ምን እንደሆነ ይመልከቱ",
+    "features": {
+      "electric": {
+        "title": "ቀላል ኤሌክትሪክ ፍጆታ",
+        "desc": "በምጣዱ የሚጠቀመው ኤሌክትሪክ መጠን በከፍተኛ ሁኔታ ይቀንሳል።"
+      },
+      "firewood": {
+        "title": "ማገዶ ቆጣቢ",
+        "desc": "ከባህላዊ ምጣዶች ጋር ሲነጻጸር የሚጠቀመው ማገዶ መጠን በግማሽ ይቀንሳል።"
+      },
+      "safe": {
+        "title": "ደህንነት የተረጋገጠ",
+        "desc": "በከፍተኛ ጥራት የተመረተ፣ የአገር ውስጥ የጥራት ደረጃን ያሟላ።"
+      },
+      "delivery": {
+        "title": "ፈጣን ማድረስ",
+        "desc": "በአዲስ አበባ እና በአቅራቢያው አካባቢዎች ፈጣን ማድረስ።"
+      }
+    },
+    "productsTitle": "የእኛ ምርቶች",
+    "productsSubtitle": "ለቤትዎ የሚስማማውን ይምረጡ",
+    "products": {
+      "electricStove": {
+        "name": "ግሩም ኤሌክትሪክ ምጣድ",
+        "tag": "ምርጥ ሽያጭ",
+        "desc": "ዘመናዊ የኤሌክትሪክ ምጣድ — ከፍተኛ ሙቀት በቀላሉ።",
+        "price": "ETB 4,500"
+      },
+      "firewoodStove": {
+        "name": "ግሩም ማገዶ ቆጣቢ ምጣድ",
+        "tag": "አዲስ",
+        "desc": "ባህላዊ ጣዕም ከዘመናዊ ቅልጥፍና ጋር።",
+        "price": "ETB 2,500"
+      },
+      "halfStove": {
+        "name": "ግሩም አክሰሰሪ",
+        "tag": "ተመራጭ",
+        "desc": "ሁለገብ የምግብ ማብሰያ — ለቤትም ለንግድም።",
+        "price": "ETB 1,800"
+      }
+    },
+    "whyTitle": "ለምን እኛን ይመርጣሉ?",
+    "whyItems": {
+      "local": "በአገር ውስጥ የተመረተ — ጥራቱ የተረጋገጠ",
+      "warranty": "ከ2 ዓመት የዋስትና ጋር",
+      "freeDelivery": "ነጻ የቤት ውስጥ ማድረስ እና ተከላ",
+      "afterSales": "ከሽያጭ በኋላ የጥገና አገልግሎት",
+      "affordable": "ተመጣጣኝ ዋጋ እና ቀላል ክፍያ",
+      "expert": "የባለሙያ ምክር እና ድጋፍ"
+    },
+    "ctaTitle": "ዛሬ ይዘዙ!",
+    "ctaDesc": "ልዩ ቅናሽ እና ነጻ ማድረስ ለቀዳሚዎቹ 50 ደንበኞች።",
+    "ctaButton": "አሁን ያግኙን",
+    "finalTitle": "ዝግጁ ነዎት?",
+    "finalDesc": "ዛሬውኑ ያግኙን፣ ስለ ምርቶቻችን የበለጠ ይወቁ።",
+    "finalButton": "አግኙን"
+  },
+  "about": {
+    "title": "ስለ እኛ",
+    "subtitle": "ስለ ግሩም ምጣድ ታሪክ እና ተልዕኮ ይወቁ።",
+    "storyTitle": "ታሪካችን",
+    "storyP1": "ግሩም ምጣድ የተቋቋመው በ2014 ዓ.ም ሲሆን፣ ዓላማውም የኢትዮጵያ ቤተሰቦች የሚጠቀሙባቸውን ባህላዊ ምጣዶች ወደ ዘመናዊ፣ ቆጣቢ እና ደህንነታቸው የተጠበቀ ምርቶች መቀየር ነበር።",
+    "storyP2": "ከትንሽ ወርክሾፕ ተጀምረን ዛሬ በአዲስ አበባ እና በአቅራቢያው አካባቢዎች 4 ቅርንጫፎችን ያሉት ድርጅት ሆነናል። በሺዎች የሚቆጠሩ ደንበኞችን በማገልገል በአገር ውስጥ ገበያ ተወዳጅ ስም ሆነናል።",
+    "storyP3": "ሁልጊዜም የደንበኞቻችንን ፍላጎት በማስቀደም፣ ጥራት ያለው ምርት እና ተመጣጣኝ ዋጋ በማቅረብ እንቀጥላለን።",
+    "stats": {
+      "founded": "የተመሠረተበት",
+      "customers": "ደንበኞች",
+      "branches": "ቅርንጫፎች",
+      "employees": "ሠራተኞች"
+    },
+    "mission": "ተልዕኮ",
+    "missionDesc": "ለኢትዮጵያ ቤተሰቦች ዘመናዊ፣ ቆጣቢ እና ደህንነታቸው የተጠበቀ ምጣድ በተመጣጣኝ ዋጋ በማቅረብ የኑሮ ደረጃቸውን ማሻሻል።",
+    "vision": "ራዕይ",
+    "visionDesc": "በ2020 ዓ.ም በኢትዮጵያ ግንባር ቀደም የምጣድ አምራች ድርጅት መሆን እና ወደ አፍሪካ ገበያ መስፋፋት።",
+    "valuesTitle": "እሴቶቻችን",
+    "valuesSubtitle": "ስራችንን የምንመራባቸው መርሆች",
+    "values": {
+      "quality": { "title": "ጥራት", "desc": "ሁልጊዜ ጥራትን ከመጠን በላይ እናስቀድማለን።" },
+      "customer": { "title": "ደንበኛ ቅድሚያ", "desc": "የደንበኞቻችንን ፍላጎት ሁልጊዜ እናከብራለን።" },
+      "honesty": { "title": "ታማኝነት", "desc": "በተስፋፋ ቃል እንጸናለን።" },
+      "innovation": { "title": "ፈጠራ", "desc": "ሁልጊዜ አዲስ ቴክኖሎጂ እናምጣለን።" }
+    }
+  },
+  "contact": {
+    "title": "አግኙን",
+    "subtitle": "ጥያቄ አለዎት? እኛን ለማግኘት ከታች ያሉትን መንገዶች ይጠቀሙ።",
+    "phone": "ስልክ",
+    "email": "ኢሜይል",
+    "address": "አድራሻ",
+    "addressValue": "አዲስ አበባ, ኢትዮጵያ",
+    "addressDetail": "ቦሌ ክፍለ ከተማ",
+    "hours": "የስራ ሰዓት",
+    "hoursValue": "ሰኞ - ቅዳሜ",
+    "hoursDetail": "2:00 - 11:30 (ከሰዓት)",
+    "formTitle": "መልእክት ይላኩ",
+    "formDesc": "ቅጹን ይሙሉ፣ በተቻለ ፍጥነት እናገኝዎታለን።",
+    "form": {
+      "name": "ሙሉ ስም",
+      "phone": "ስልክ ቁጥር",
+      "email": "ኢሜይል",
+      "message": "መልእክት",
+      "namePlaceholder": "ሙሉ ስምዎ",
+      "phonePlaceholder": "0912345678",
+      "emailPlaceholder": "you@example.com",
+      "messagePlaceholder": "መልእክትዎን ይጻፉ...",
+      "submit": "መልእክት ላክ",
+      "successTitle": "መልእክትዎ ተልኳል!",
+      "successDesc": "በተቻለ ፍጥነት እናገኝዎታለን።"
+    }
+  },
+  "footer": {
+    "tagline": "ዘመናዊ የኤሌክትሪክ እና ማገዶ ቆጣቢ ምጣዶችን የምናመርትና የምንሸጥ ድርጅት።",
+    "quickLinks": "ፈጣን አገናኞች",
+    "contactUs": "አግኙን",
+    "rights": "ሁሉም መብቶች የተጠበቁ ናቸው።"
+  },
+  "common": {
+    "loading": "በመጫን ላይ...",
+    "language": "ቋንቋ",
+    "amharic": "አማርኛ",
+    "english": "English"
+  },
+  "auth": {
+    "login": {
+      "title": "እንኳን ደህና መጡ",
+      "subtitle": "ወደ ግሩም ምጣድ ስርዓት ለመግባት ይግቡ",
+      "phone": "ስልክ ቁጥር",
+      "phonePlaceholder": "0912345678",
+      "password": "ፓስወርድ",
+      "passwordPlaceholder": "••••••",
+      "rememberMe": "አስታውሰኝ",
+      "forgotPassword": "ፓስወርድ ረሳህ?",
+      "submit": "ግባ",
+      "submitting": "በመግባት ላይ...",
+      "noAccount": "አካውንት የለዎትም?",
+      "register": "ይመዝገቡ",
+      "success": "በተሳካ ሁኔታ ገብተዋል",
+      "error": "መግቢያ አልተሳካም"
+    },
+    "register": {
+      "title": "አዲስ አካውንት ይፍጠሩ",
+      "subtitle": "የግሩም ምጣድ ስርዓት አባል ይሁኑ",
+      "fullName": "ሙሉ ስም",
+      "fullNamePlaceholder": "ሙሉ ስምዎ",
+      "phone": "ስልክ ቁጥር",
+      "phonePlaceholder": "0912345678",
+      "email": "ኢሜይል (አማራጭ)",
+      "emailPlaceholder": "you@example.com",
+      "password": "ፓስወርድ",
+      "passwordPlaceholder": "ቢያንስ 6 ፊደል",
+      "confirmPassword": "ፓስወርድ ያረጋግጡ",
+      "confirmPasswordPlaceholder": "ፓስወርድዎን እንደገና ያስገቡ",
+      "role": "ሚና",
+      "roles": {
+        "seller": "ሻጭ",
+        "customer": "ደንበኛ",
+        "owner": "ባለቤት",
+        "admin": "አስተዳዳሪ"
+      },
+      "agreeTerms": "የአገልግሎት ውሎችን እና የግላዊነት መመሪያን ተቀብያለሁ",
+      "submit": "ተመዝገብ",
+      "submitting": "በመመዝገብ ላይ...",
+      "haveAccount": "አካውንት አለዎት?",
+      "login": "ግባ",
+      "success": "በተሳካ ሁኔታ ተመዝግበዋል",
+      "error": "ምዝገባ አልተሳካም",
+      "passwordMismatch": "ፓስወርዶቹ አይመሳሰሉም",
+      "termsRequired": "ውሎችን መቀበል ያስፈልጋል"
+    },
+    "forgotPassword": {
+      "title": "ፓስወርድ ረሳህ?",
+      "subtitle": "የስልክ ቁጥርዎን ያስገቡ፣ የማረጋገጫ ኮድ እንልክልዎታለን",
+      "phone": "ስልክ ቁጥር",
+      "phonePlaceholder": "0912345678",
+      "submit": "ኮድ ላክ",
+      "submitting": "በመላክ ላይ...",
+      "backToLogin": "ወደ መግቢያ ተመለስ",
+      "success": "የማረጋገጫ ኮድ ተልኳል",
+      "error": "ኮድ መላክ አልተሳካም",
+      "noAccount": "አካውንት የለዎትም?",
+      "register": "ይመዝገቡ"
+    },
+    "resetPassword": {
+      "title": "አዲስ ፓስወርድ ያዘጋጁ",
+      "subtitle": "የማረጋገጫ ኮድዎን ያስገቡ እና አዲስ ፓስወርድ ይምረጡ",
+      "code": "የማረጋገጫ ኮድ",
+      "codePlaceholder": "123456",
+      "newPassword": "አዲስ ፓስወርድ",
+      "newPasswordPlaceholder": "ቢያንስ 6 ፊደል",
+      "confirmPassword": "ፓስወርድ ያረጋግጡ",
+      "confirmPasswordPlaceholder": "አዲሱን ፓስወርድ እንደገና ያስገቡ",
+      "submit": "ፓስወርድ ቀይር",
+      "submitting": "በመቀየር ላይ...",
+      "backToLogin": "ወደ መግቢያ ተመለስ",
+      "success": "ፓስወርድ በተሳካ ሁኔታ ተቀይሯል",
+      "error": "ፓስወርድ መቀየር አልተሳካም",
+      "passwordMismatch": "ፓስወርዶቹ አይመሳሰሉም"
+    },
+    "validation": {
+      "phoneRequired": "ስልክ ቁጥር ያስፈልጋል",
+      "phoneInvalid": "ትክክለኛ የኢትዮጵያ ስልክ ቁጥር ያስገቡ",
+      "passwordRequired": "ፓስወርድ ያስፈልጋል",
+      "passwordMin": "ፓስወርድ ቢያንስ 6 ፊደል መሆን አለበት",
+      "nameRequired": "ሙሉ ስም ያስፈልጋል",
+      "nameMin": "ሙሉ ስም ቢያንስ 2 ፊደል መሆን አለበት",
+      "emailInvalid": "ትክክለኛ ኢሜይል ያስገቡ",
+      "codeRequired": "የማረጋገጫ ኮድ ያስፈልጋል",
+      "codeLength": "ኮዱ 6 አሃዝ መሆን አለበት"
+    }
+  }
+}
