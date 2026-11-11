@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { useAuth } from '@/components/providers/AuthProvider';
 import {
-  Plus, Search, Edit, Trash2, Eye, Users, DollarSign,
+  Plus, Search, Eye, Edit, Trash2, Users, DollarSign,
   UserCheck, UserX, Phone, Mail, Building2, Shield, Briefcase,
 } from 'lucide-react';
 import { formatETB, formatDate } from '@/lib/utils';
@@ -16,6 +16,7 @@ import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
 import ConfirmModal from '@/components/ui/ConfirmModal';
+import ActionButtons from '@/components/ui/ActionButtons';
 import toast from 'react-hot-toast';
 
 export default function EmployeesPage() {
@@ -58,10 +59,8 @@ export default function EmployeesPage() {
     return { total, active, onLeave, totalSalary };
   }, [employees]);
 
-  // ✅ Delete handlers
-  const handleDeleteClick = (employee) => {
-    setDeleteTarget(employee);
-  };
+  // Delete
+  const handleDeleteClick = (employee) => setDeleteTarget(employee);
 
   const handleDeleteConfirm = async () => {
     if (!deleteTarget) return;
@@ -78,6 +77,7 @@ export default function EmployeesPage() {
     }
   };
 
+  // Save
   const handleSave = (data) => {
     if (editingEmployee) {
       setEmployees(employees.map((e) => e._id === editingEmployee._id ? { ...e, ...data } : e));
@@ -218,29 +218,13 @@ export default function EmployeesPage() {
                         <Badge color={status.color}>{status.label}</Badge>
                       </td>
                       <td className="px-4 py-3">
-                        <div className="flex items-center justify-center gap-1">
-                          <button onClick={() => setViewEmployee(emp)} className="p-1.5 rounded text-gray-500 hover:text-brand hover:bg-blue-50 transition" title="ይመልከቱ">
-                            <Eye size={16} />
-                          </button>
-                          {canManage && (
-                            <>
-                              <button
-                                onClick={() => { setEditingEmployee(emp); setShowModal(true); }}
-                                className="p-1.5 rounded text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition"
-                                title="አስተካክል"
-                              >
-                                <Edit size={16} />
-                              </button>
-                              <button
-                                onClick={() => handleDeleteClick(emp)}
-                                className="p-1.5 rounded text-gray-500 hover:text-red-600 hover:bg-red-50 transition"
-                                title="ሰርዝ"
-                              >
-                                <Trash2 size={16} />
-                              </button>
-                            </>
-                          )}
-                        </div>
+                        <ActionButtons
+                          onView={() => setViewEmployee(emp)}
+                          onEdit={() => { setEditingEmployee(emp); setShowModal(true); }}
+                          onDelete={() => handleDeleteClick(emp)}
+                          canEdit={canManage}
+                          canDelete={canManage}
+                        />
                       </td>
                     </tr>
                   );
@@ -291,6 +275,8 @@ export default function EmployeesPage() {
     </div>
   );
 }
+
+// ============ Sub-components ============
 
 function StatCard({ label, value, icon: Icon, color }) {
   return (

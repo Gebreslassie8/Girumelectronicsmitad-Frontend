@@ -6,47 +6,40 @@ import { useTranslations } from 'next-intl';
 import {
   LayoutDashboard, Package, ShoppingCart, FileText,
   BarChart3, Building2, Users, LogOut, X, User,
-  Wallet, TrendingUp, ClipboardList, UserCircle,
-  Settings, Bell, History,
+  Wallet, UserCircle, Settings, Bell, History,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/components/providers/AuthProvider';
 
+// ✅ ሁሉም items ልዩ `id` አላቸው
 const NAV_GROUPS = [
   {
     titleKey: 'sidebar.main',
     items: [
-      { href: '/dashboard',           labelKey: 'dashboard', icon: LayoutDashboard, roles: ['admin', 'seller', 'customer'] },
-      { href: '/dashboard/inventory', labelKey: 'inventory', icon: Package,        roles: ['admin', 'seller'] },
-      { href: '/dashboard/products',  labelKey: 'products',  icon: ShoppingCart,   roles: ['admin', 'seller', 'customer'] },
-      { href: '/dashboard/orders',    labelKey: 'orders',    icon: FileText,       roles: ['admin', 'seller', 'customer'] },
-      { href: '/dashboard/receipts',  labelKey: 'receipts',  icon: FileText,       roles: ['admin', 'seller', 'customer'] },
+      { id: 'dashboard',   href: '/dashboard',              labelKey: 'dashboard',  icon: LayoutDashboard, roles: ['admin', 'seller', 'customer'] },
+      { id: 'users',       href: '/dashboard/users',        labelKey: 'users',      icon: UserCircle,      roles: ['admin'] },
+      { id: 'employees',   href: '/dashboard/employees',    labelKey: 'employees',  icon: Users,           roles: ['admin'] },
+      { id: 'inventory',   href: '/dashboard/inventory',    labelKey: 'inventory',  icon: Package,         roles: ['admin', 'seller'] },
+      { id: 'products',    href: '/dashboard/products',     labelKey: 'products',   icon: ShoppingCart,    roles: ['admin', 'seller'] },
+      { id: 'myProducts',  href: '/dashboard/my-products',  labelKey: 'myProducts', icon: History,         roles: ['customer'] },
+      { id: 'orders',      href: '/dashboard/orders',       labelKey: 'orders',     icon: FileText,        roles: ['admin', 'seller', 'customer'] },
+      { id: 'receipts',    href: '/dashboard/receipts',     labelKey: 'receipts',   icon: FileText,        roles: ['admin', 'seller', 'customer'] },
+      { id: 'branches',    href: '/dashboard/branches',     labelKey: 'branches',   icon: Building2,       roles: ['admin'] },
     ],
   },
   {
     titleKey: 'sidebar.finance',
     items: [
-      { href: '/dashboard/expenses', labelKey: 'expenses', icon: Wallet,        roles: ['admin'] },
-      { href: '/dashboard/revenue',  labelKey: 'revenue',  icon: TrendingUp,    roles: ['admin'] },
-      { href: '/dashboard/reports',  labelKey: 'reports',  icon: ClipboardList, roles: ['admin'] },
-    ],
-  },
-  {
-    titleKey: 'sidebar.management',
-    items: [
-      { href: '/dashboard/analytics', labelKey: 'analytics', icon: BarChart3,     roles: ['admin'] },
-      { href: '/dashboard/branches',  labelKey: 'branches',  icon: Building2,     roles: ['admin'] },
-      { href: '/dashboard/employees', labelKey: 'employees', icon: Users,         roles: ['admin'] },
-      { href: '/dashboard/users',     labelKey: 'users',     icon: UserCircle,    roles: ['admin'] },
+      { id: 'expenses',   href: '/dashboard/expenses',  labelKey: 'expenses',  icon: Wallet,    roles: ['admin', 'seller'] },
+      { id: 'analytics',  href: '/dashboard/analytics', labelKey: 'analytics', icon: BarChart3, roles: ['admin', 'seller'] },
     ],
   },
   {
     titleKey: 'sidebar.other',
     items: [
-      { href: '/dashboard/notifications', labelKey: 'notifications', icon: Bell,     roles: ['admin', 'seller', 'customer'] },
-      { href: '/dashboard/activity',      labelKey: 'activity',      icon: History,  roles: ['admin'] },
-      { href: '/dashboard/profile',       labelKey: 'profile',       icon: User,     roles: ['admin', 'seller', 'customer'] },
-      { href: '/dashboard/settings',      labelKey: 'settings',      icon: Settings, roles: ['admin'] },
+      { id: 'notifications', href: '/dashboard/notifications', labelKey: 'notifications', icon: Bell,     roles: ['admin', 'seller', 'customer'] },
+      { id: 'activity',      href: '/dashboard/activity',      labelKey: 'activity',      icon: History,  roles: ['admin'] },
+      { id: 'settings',      href: '/dashboard/settings',      labelKey: 'settings',      icon: Settings, roles: ['admin'] },
     ],
   },
 ];
@@ -88,7 +81,7 @@ export default function Sidebar({ open, onClose }) {
             </div>
             <div>
               <h1 className="text-base font-bold text-gray-800 leading-tight">ግሩም ምጣድ</h1>
-              <p className="text-[10px] text-gray-500">Grum Stove Admin</p>
+              <p className="text-[10px] text-gray-500">Grum Stove</p>
             </div>
           </Link>
 
@@ -102,7 +95,7 @@ export default function Sidebar({ open, onClose }) {
 
         <nav className="flex-1 p-2 overflow-y-auto">
           {filteredGroups.map((group, gi) => (
-            <div key={gi} className={gi > 0 ? 'mt-3' : ''}>
+            <div key={group.titleKey} className={gi > 0 ? 'mt-3' : ''}>
               <p className="px-3 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
                 {tSidebar(group.titleKey.replace('sidebar.', ''))}
               </p>
@@ -112,7 +105,7 @@ export default function Sidebar({ open, onClose }) {
                 const label = t(item.labelKey);
                 return (
                   <Link
-                    key={item.href}
+                    key={item.id}          // ✅ ልዩ ID
                     href={item.href}
                     onClick={onClose}
                     className={cn(
@@ -135,7 +128,10 @@ export default function Sidebar({ open, onClose }) {
         </nav>
 
         <div className="p-3 border-t border-gray-200">
-          <div className="flex items-center gap-2.5 p-2 rounded-lg bg-gray-50 mb-2">
+          <Link
+            href="/dashboard/profile"
+            className="flex items-center gap-2.5 p-2 rounded-lg bg-gray-50 mb-2 hover:bg-gray-100 transition"
+          >
             <div className="w-9 h-9 rounded-full bg-brand text-white flex items-center justify-center font-semibold text-sm flex-shrink-0">
               {user?.fullName?.charAt(0)?.toUpperCase() || 'U'}
             </div>
@@ -147,7 +143,7 @@ export default function Sidebar({ open, onClose }) {
                 {user?.role || ''}
               </p>
             </div>
-          </div>
+          </Link>
           <button
             onClick={logout}
             className="flex items-center justify-center gap-2 w-full text-sm text-red-600 hover:bg-red-50 rounded-lg py-2 transition font-medium"

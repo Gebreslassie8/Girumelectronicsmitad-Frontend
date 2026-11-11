@@ -5,7 +5,7 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import {
   Plus, Search, FileText, Clock, Package, CheckCircle2,
   DollarSign, Calendar, User, Phone, MapPin, Building2,
-  Truck, XCircle, Play,
+  Play,
 } from 'lucide-react';
 import { formatETB, formatDate } from '@/lib/utils';
 import { MOCK_ORDERS, ORDER_STATUS, ORDER_BRANCHES, ORDER_ITEM_TYPES } from '@/lib/mockOrders';
@@ -31,9 +31,27 @@ export default function OrdersPage() {
 
   const canManage = user?.role === 'admin' || user?.role === 'seller';
 
-  // Filter
+  // ✅ Role-based base data
+  const roleFiltered = useMemo(() => {
+    let result = orders;
+
+    // Seller — የራሱ ቅርንጫፍ ብቻ
+    if (user?.role === 'seller' && user?.branch) {
+      const branchId = typeof user.branch === 'object' ? user.branch._id : user.branch;
+      result = result.filter((o) => o.branch?._id === branchId);
+    }
+
+    // Customer — የራሱ ትዕዛዞች ብቻ
+    if (user?.role === 'customer') {
+      result = result.filter((o) => o.customerPhone === user.phone);
+    }
+
+    return result;
+  }, [orders, user]);
+
+  // Filter + Search
   const filtered = useMemo(() => {
-    return orders.filter((o) => {
+    return roleFiltered.filter((o) => {
       const q = search.toLowerCase();
       const matchSearch =
         o.orderNumber.toLowerCase().includes(q) ||
@@ -44,18 +62,18 @@ export default function OrdersPage() {
       const matchBranch = branchFilter === 'all' || o.branch?._id === branchFilter;
       return matchSearch && matchStatus && matchBranch;
     });
-  }, [orders, search, statusFilter, branchFilter]);
+  }, [roleFiltered, search, statusFilter, branchFilter]);
 
-  // Stats
+  // ✅ Stats — ሚና-ተኮር
   const stats = useMemo(() => {
-    const total = orders.length;
-    const pending = orders.filter((o) => o.status === 'pending').length;
-    const inProduction = orders.filter((o) => o.status === 'in_production').length;
-    const ready = orders.filter((o) => o.status === 'ready').length;
-    const totalRevenue = orders.reduce((s, o) => s + o.totalPrice, 0);
-    const totalRemaining = orders.reduce((s, o) => s + o.remainingPayment, 0);
+    const total = roleFiltered.length;
+    const pending = roleFiltered.filter((o) => o.status === 'pending').length;
+    const inProduction = roleFiltered.filter((o) => o.status === 'in_production').length;
+    const ready = roleFiltered.filter((o) => o.status === 'ready').length;
+    const totalRevenue = roleFiltered.reduce((s, o) => s + o.totalPrice, 0);
+    const totalRemaining = roleFiltered.reduce((s, o) => s + o.remainingPayment, 0);
     return { total, pending, inProduction, ready, totalRevenue, totalRemaining };
-  }, [orders]);
+  }, [roleFiltered]);
 
   // Delete
   const handleDeleteClick = (order) => setDeleteTarget(order);
@@ -86,7 +104,7 @@ export default function OrdersPage() {
         _id: 'o' + (orders.length + 1),
         orderNumber: `ORD-2026-${String(orders.length + 1).padStart(4, '0')}`,
         createdAt: new Date().toISOString().split('T')[0],
-        createdBy: { fullName: user?.fullName || 'User' },
+        createdBy: { fullName: user?.fullName || 'User', _id: user?._id },
       };
       setOrders([newOrder, ...orders]);
       toast.success('ትዕዛዝ ተጨምሯል');
@@ -104,6 +122,12 @@ export default function OrdersPage() {
           <p className="text-sm text-gray-500 mt-1">
             {filtered.length} ትዕዛዞች · {formatETB(stats.totalRevenue)} ጠቅላላ ዋጋ
           </p>
+          {user?.role === 'seller' && user?.branch && (
+            <p className="text-xs text-brand font-medium mt-1 flex items-center gap-1">
+              <Building2 size={12} />
+              {typeof user.branch === 'object' ? user.branch.name : 'ቅርንጫፍ'}
+            </p>
+          )}
         </div>
         {canManage && (
           <Button onClick={() => { setEditingOrder(null); setShowModal(true); }}>
@@ -143,14 +167,25 @@ export default function OrdersPage() {
               <option key={k} value={k}>{v.label}</option>
             ))}
           </select>
-          <select
-            value={branchFilter}
-            onChange={(e) => setBranchFilter(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand text-sm bg-white"
-          >
-            <option value="all">ሁሉም ቅርንጫፎች</option>
-            {ORDER_BRANCHES.map((b) => <option key={b._id} value={b._id}>{b.name}</option>)}
-          </select>
+
+          {/* ✅ Branch filter — Admin ብቻ */}
+          {user?.role === 'admin' ? (
+            <select
+              value={branchFilter}
+              onChange={(e) => setBranchFilter(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand text-sm bg-white"
+            >
+              <option value="all">ሁሉም ቅርንጫፎች</option>
+              {ORDER_BRANCHES.map((b) => <option key={b._id} value={b._id}>{b.name}</option>)}
+            </select>
+          ) : (
+            <div className="px-3 py-2 rounded-lg bg-blue-50 text-blue-700 text-sm flex items-center gap-2">
+              <Building2 size={14} />
+              <span className="font-medium">
+                {user?.branch ? (typeof user.branch === 'object' ? user.branch.name : 'ቅርንጫፍ') : 'ቅርንጫፍ'}
+              </span>
+            </div>
+          )}
         </div>
       </Card>
 
@@ -181,6 +216,11 @@ export default function OrdersPage() {
                         <FileText size={28} className="text-gray-400" />
                       </div>
                       <p className="text-gray-500 text-sm">ምንም ትዕዛዝ አልተገኘም</p>
+                      {user?.role === 'seller' && user?.branch && (
+                        <p className="text-xs text-gray-400">
+                          ቅርንጫፍ: {typeof user.branch === 'object' ? user.branch.name : 'ቅርንጫፍ'}
+                        </p>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -244,6 +284,7 @@ export default function OrdersPage() {
           order={editingOrder}
           onSave={handleSave}
           onCancel={() => { setShowModal(false); setEditingOrder(null); }}
+          currentUser={user}
         />
       </Modal>
 
@@ -292,7 +333,7 @@ function StatCard({ label, value, icon: Icon, color }) {
   );
 }
 
-function OrderForm({ order, onSave, onCancel }) {
+function OrderForm({ order, onSave, onCancel, currentUser }) {
   const [form, setForm] = useState({
     customerName: order?.customerName || '',
     customerPhone: order?.customerPhone || '',
@@ -304,7 +345,9 @@ function OrderForm({ order, onSave, onCancel }) {
     status: order?.status || 'pending',
     appointmentDate: order?.appointmentDate || '',
     note: order?.note || '',
-    branch: order?.branch?._id || 'b1',
+    branch: order?.branch?._id || (currentUser?.role === 'seller' && currentUser?.branch
+      ? (typeof currentUser.branch === 'object' ? currentUser.branch._id : currentUser.branch)
+      : 'b1'),
     measurements: order?.measurements || { width: '', height: '', depth: '', unit: 'cm' },
   });
 
@@ -341,6 +384,9 @@ function OrderForm({ order, onSave, onCancel }) {
       branch: branch || { _id: form.branch, name: 'ቦሌ ቅርንጫፍ' },
     });
   };
+
+  // ✅ Seller ሲሆን branch ቋሚ ነው
+  const isSeller = currentUser?.role === 'seller';
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -395,12 +441,21 @@ function OrderForm({ order, onSave, onCancel }) {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand text-sm"
             />
           </FormField>
+
+          {/* ✅ Seller — branch ቋሚ */}
           <FormField label="ቅርንጫፍ *">
-            <select name="branch" value={form.branch} onChange={onChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-brand text-sm">
-              {ORDER_BRANCHES.map((b) => <option key={b._id} value={b._id}>{b.name}</option>)}
-            </select>
+            {isSeller ? (
+              <div className="w-full px-3 py-2 rounded-lg bg-blue-50 text-blue-700 text-sm font-medium">
+                {typeof currentUser.branch === 'object' ? currentUser.branch?.name : 'ቅርንጫፍ'}
+              </div>
+            ) : (
+              <select name="branch" value={form.branch} onChange={onChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-brand text-sm">
+                {ORDER_BRANCHES.map((b) => <option key={b._id} value={b._id}>{b.name}</option>)}
+              </select>
+            )}
           </FormField>
+
           <FormField label="ሁኔታ">
             <select name="status" value={form.status} onChange={onChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-brand text-sm">

@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import { useAuth } from '@/components/providers/AuthProvider';
 import {
   DollarSign, TrendingUp, TrendingDown, ShoppingCart, BarChart3,
-  PieChart as PieChartIcon, Calendar, Package, ArrowUp, ArrowDown,
+  PieChart as PieChartIcon, Package, ArrowUp, ArrowDown, Building2,
 } from 'lucide-react';
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
@@ -15,16 +15,91 @@ import {
   ANALYTICS_STATS, REVENUE_CHART, ORDERS_CHART,
   CATEGORY_CHART, BRANCH_PERFORMANCE, TOP_PRODUCTS, TIME_RANGES,
 } from '@/lib/mockAnalytics';
+import { MOCK_ORDERS } from '@/lib/mockOrders';
 import Card from '@/components/ui/Card';
 
 export default function AnalyticsPage() {
   const { user } = useAuth();
   const [timeRange, setTimeRange] = useState('month');
 
-  // ✅ Admin ብቻ
-  const canView = user?.role === 'admin';
+  // ✅ Admin + Seller ብቻ
+  const canView = user?.role === 'admin' || user?.role === 'seller';
 
-  const stats = ANALYTICS_STATS[timeRange] || ANALYTICS_STATS.month;
+  // ✅ Get user's branch ID
+  const userBranchId = useMemo(() => {
+    if (!user?.branch) return null;
+    return typeof user.branch === 'object' ? user.branch._id : user.branch;
+  }, [user]);
+
+  const isSeller = user?.role === 'seller';
+
+  // ✅ Role-based stats
+  const stats = useMemo(() => {
+    // Seller — የራሱ ቅርንጫፍ ብቻ
+    if (isSeller && userBranchId) {
+      const sellerOrders = MOCK_ORDERS.filter((o) => o.branch?._id === userBranchId);
+      const totalRevenue = sellerOrders.reduce((s, o) => s + o.totalPrice, 0);
+      const totalExpense = Math.round(totalRevenue * 0.42); // 42% ወጪ (mock)
+      const totalProfit = totalRevenue - totalExpense;
+      return {
+        revenue: totalRevenue,
+        expense: totalExpense,
+        profit: totalProfit,
+        orders: sellerOrders.length,
+      };
+    }
+
+    // Admin — ሙሉ ውሂብ
+    return ANALYTICS_STATS[timeRange] || ANALYTICS_STATS.month;
+  }, [isSeller, userBranchId, timeRange]);
+
+  // ✅ Role-based revenue chart
+  const revenueChart = useMemo(() => {
+    if (isSeller) {
+      // Seller — የራሱ ቅርንጫፍ ብቻ (60% የራሱ ድርሻ)
+      return REVENUE_CHART.map((r) => ({
+        ...r,
+        revenue: Math.round(r.revenue * 0.35),
+        expense: Math.round(r.expense * 0.35),
+      }));
+    }
+    return REVENUE_CHART;
+  }, [isSeller]);
+
+  // ✅ Role-based orders chart
+  const ordersChart = useMemo(() => {
+    if (isSeller) {
+      return ORDERS_CHART.map((o) => ({
+        ...o,
+        orders: Math.round(o.orders * 0.3),
+      }));
+    }
+    return ORDERS_CHART;
+  }, [isSeller]);
+
+  // ✅ Role-based branch performance (Seller የራሱ ቅርንጫፍ ብቻ)
+  const branchPerformance = useMemo(() => {
+    if (isSeller && userBranchId) {
+      const sellerBranch = BRANCH_PERFORMANCE.find(
+        (b) => b.name === (typeof user.branch === 'object' ? user.branch.name?.split(' ')[0] : '')
+      );
+      if (sellerBranch) return [sellerBranch];
+      return BRANCH_PERFORMANCE.slice(0, 1); // fallback
+    }
+    return BRANCH_PERFORMANCE;
+  }, [isSeller, userBranchId, user]);
+
+  // ✅ Role-based top products (Seller — የራሱ ቅርንጫፍ)
+  const topProducts = useMemo(() => {
+    if (isSeller) {
+      return TOP_PRODUCTS.slice(0, 3).map((p) => ({
+        ...p,
+        sold: Math.round(p.sold * 0.3),
+        revenue: Math.round(p.revenue * 0.3),
+      }));
+    }
+    return TOP_PRODUCTS;
+  }, [isSeller]);
 
   if (!canView) {
     return (
@@ -33,7 +108,7 @@ export default function AnalyticsPage() {
           <BarChart3 size={40} className="text-red-500" />
         </div>
         <h1 className="text-2xl font-bold text-gray-800 mb-2">ፍቃድ የለዎትም</h1>
-        <p className="text-gray-600">የትንተና ገጽ ለአስተዳዳሪ ብቻ ነው።</p>
+        <p className="text-gray-600">የትንተና ገጽ ለአስተዳዳሪ እና ሻጭ ብቻ ነው።</p>
       </div>
     );
   }
@@ -49,26 +124,35 @@ export default function AnalyticsPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-800">ትንተና</h1>
           <p className="text-sm text-gray-500 mt-1">
-            የሽያጭ፣ የወጪ እና የትርፍ ሪፖርት
+            {isSeller ? 'የእርስዎ ቅርንጫፍ ሽያጭ፣ ወጪ እና ትርፍ' : 'የሽያጭ፣ የወጪ እና የትርፍ ሪፖርት'}
           </p>
+          {/* ✅ Seller — branch display */}
+          {isSeller && userBranchId && (
+            <p className="text-xs text-brand font-medium mt-1 flex items-center gap-1">
+              <Building2 size={12} />
+              {typeof user.branch === 'object' ? user.branch.name : 'ቅርንጫፍ'}
+            </p>
+          )}
         </div>
 
-        {/* Time Range Filter */}
-        <div className="inline-flex items-center gap-1 p-1 rounded-lg bg-gray-100">
-          {TIME_RANGES.map((r) => (
-            <button
-              key={r.key}
-              onClick={() => setTimeRange(r.key)}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${
-                timeRange === r.key
-                  ? 'bg-white text-brand shadow-sm'
-                  : 'text-gray-600 hover:text-gray-800'
-              }`}
-            >
-              {r.label}
-            </button>
-          ))}
-        </div>
+        {/* Time Range Filter — Admin ብቻ */}
+        {!isSeller && (
+          <div className="inline-flex items-center gap-1 p-1 rounded-lg bg-gray-100">
+            {TIME_RANGES.map((r) => (
+              <button
+                key={r.key}
+                onClick={() => setTimeRange(r.key)}
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${
+                  timeRange === r.key
+                    ? 'bg-white text-brand shadow-sm'
+                    : 'text-gray-600 hover:text-gray-800'
+                }`}
+              >
+                {r.label}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Main Stats */}
@@ -143,7 +227,9 @@ export default function AnalyticsPage() {
               <BarChart3 size={18} className="text-brand" />
               ገቢ vs ወጪ
             </h3>
-            <p className="text-xs text-gray-500 mt-0.5">የ6 ወራት አዝማሚያ</p>
+            <p className="text-xs text-gray-500 mt-0.5">
+              {isSeller ? 'የእርስዎ ቅርንጫፍ የ6 ወራት አዝማሚያ' : 'የ6 ወራት አዝማሚያ'}
+            </p>
           </div>
           <div className="flex items-center gap-4 text-xs">
             <span className="flex items-center gap-1.5">
@@ -157,7 +243,7 @@ export default function AnalyticsPage() {
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
-          <AreaChart data={REVENUE_CHART}>
+          <AreaChart data={revenueChart}>
             <defs>
               <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#1d4ed8" stopOpacity={0.3} />
@@ -190,10 +276,12 @@ export default function AnalyticsPage() {
               <ShoppingCart size={18} className="text-purple-500" />
               ወርሃዊ ትዕዛዞች
             </h3>
-            <p className="text-xs text-gray-500 mt-0.5">የ6 ወራት ትዕዛዞች</p>
+            <p className="text-xs text-gray-500 mt-0.5">
+              {isSeller ? 'የእርስዎ ቅርንጫፍ ትዕዛዞች' : 'የ6 ወራት ትዕዛዞች'}
+            </p>
           </div>
           <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={ORDERS_CHART}>
+            <BarChart data={ordersChart}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
               <XAxis dataKey="month" stroke="#9ca3af" fontSize={11} />
               <YAxis stroke="#9ca3af" fontSize={11} />
@@ -241,30 +329,32 @@ export default function AnalyticsPage() {
         </Card>
       </div>
 
-      {/* Branch Performance */}
-      <Card padding="md">
-        <div className="mb-4">
-          <h3 className="text-base font-bold text-gray-800 flex items-center gap-2">
-            <BarChart3 size={18} className="text-brand" />
-            የቅርንጫፍ አፈጻጸም
-          </h3>
-          <p className="text-xs text-gray-500 mt-0.5">ገቢ vs ወጪ በቅርንጫፍ</p>
-        </div>
-        <ResponsiveContainer width="100%" height={280}>
-          <BarChart data={BRANCH_PERFORMANCE} layout="vertical">
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-            <XAxis type="number" stroke="#9ca3af" fontSize={11} tickFormatter={(v) => `${(v / 1000).toFixed(0)}K`} />
-            <YAxis dataKey="name" type="category" stroke="#9ca3af" fontSize={11} width={70} />
-            <Tooltip
-              contentStyle={{ borderRadius: 8, border: '1px solid #e5e7eb', fontSize: 12 }}
-              formatter={(v) => formatETB(v)}
-            />
-            <Legend wrapperStyle={{ fontSize: 11 }} />
-            <Bar dataKey="revenue" fill="#1d4ed8" name="ገቢ" radius={[0, 6, 6, 0]} />
-            <Bar dataKey="expense" fill="#ef4444" name="ወጪ" radius={[0, 6, 6, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
-      </Card>
+      {/* Branch Performance — Admin ብቻ */}
+      {!isSeller && (
+        <Card padding="md">
+          <div className="mb-4">
+            <h3 className="text-base font-bold text-gray-800 flex items-center gap-2">
+              <BarChart3 size={18} className="text-brand" />
+              የቅርንጫፍ አፈጻጸም
+            </h3>
+            <p className="text-xs text-gray-500 mt-0.5">ገቢ vs ወጪ በቅርንጫፍ</p>
+          </div>
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={branchPerformance} layout="vertical">
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis type="number" stroke="#9ca3af" fontSize={11} tickFormatter={(v) => `${(v / 1000).toFixed(0)}K`} />
+              <YAxis dataKey="name" type="category" stroke="#9ca3af" fontSize={11} width={70} />
+              <Tooltip
+                contentStyle={{ borderRadius: 8, border: '1px solid #e5e7eb', fontSize: 12 }}
+                formatter={(v) => formatETB(v)}
+              />
+              <Legend wrapperStyle={{ fontSize: 11 }} />
+              <Bar dataKey="revenue" fill="#1d4ed8" name="ገቢ" radius={[0, 6, 6, 0]} />
+              <Bar dataKey="expense" fill="#ef4444" name="ወጪ" radius={[0, 6, 6, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </Card>
+      )}
 
       {/* Top Products */}
       <Card padding="md">
@@ -273,11 +363,13 @@ export default function AnalyticsPage() {
             <Package size={18} className="text-purple-500" />
             ምርጥ ምርቶች
           </h3>
-          <p className="text-xs text-gray-500 mt-0.5">በሽያጭ መጠን የተደረገ ደረጃ</p>
+          <p className="text-xs text-gray-500 mt-0.5">
+            {isSeller ? 'የእርስዎ ቅርንጫፍ ምርጥ ምርቶች' : 'በሽያጭ መጠን የተደረገ ደረጃ'}
+          </p>
         </div>
         <div className="space-y-2">
-          {TOP_PRODUCTS.map((product, i) => {
-            const maxRevenue = TOP_PRODUCTS[0].revenue;
+          {topProducts.map((product, i) => {
+            const maxRevenue = topProducts[0].revenue;
             const percent = (product.revenue / maxRevenue) * 100;
             return (
               <div key={i} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition">

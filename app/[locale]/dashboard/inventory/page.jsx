@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import { useAuth } from '@/components/providers/AuthProvider';
 import {
   Plus, Search, Package, DollarSign, TrendingUp, AlertTriangle,
-  Calendar, Phone, MapPin, User, Building2,
+  Calendar, Phone, MapPin, User, Building2, X,
 } from 'lucide-react';
 import { formatETB, formatDate } from '@/lib/utils';
 import { MOCK_INVENTORY, SUPPLIERS, INVENTORY_BRANCHES } from '@/lib/mockInventory';
@@ -29,9 +29,27 @@ export default function InventoryPage() {
 
   const canManage = user?.role === 'admin' || user?.role === 'seller';
 
+  // ✅ Get user's branch ID
+  const userBranchId = useMemo(() => {
+    if (!user?.branch) return null;
+    return typeof user.branch === 'object' ? user.branch._id : user.branch;
+  }, [user]);
+
+  // ✅ Role-based base data
+  const roleFiltered = useMemo(() => {
+    let result = items;
+
+    // Seller — የራሱ ቅርንጫፍ ብቻ
+    if (user?.role === 'seller' && userBranchId) {
+      result = result.filter((i) => i.branch?._id === userBranchId);
+    }
+
+    return result;
+  }, [items, user, userBranchId]);
+
   // Filter
   const filtered = useMemo(() => {
-    return items.filter((i) => {
+    return roleFiltered.filter((i) => {
       const q = search.toLowerCase();
       const matchSearch =
         i.itemType.toLowerCase().includes(q) ||
@@ -40,16 +58,16 @@ export default function InventoryPage() {
       const matchBranch = branchFilter === 'all' || i.branch?._id === branchFilter;
       return matchSearch && matchBranch;
     });
-  }, [items, search, branchFilter]);
+  }, [roleFiltered, search, branchFilter]);
 
-  // Stats
+  // ✅ Stats — ሚና-ተኮር
   const stats = useMemo(() => {
-    const total = items.length;
-    const totalValue = items.reduce((s, i) => s + i.totalPrice, 0);
-    const totalQuantity = items.reduce((s, i) => s + i.quantity, 0);
-    const lowStock = items.filter((i) => i.quantity < 10).length;
+    const total = roleFiltered.length;
+    const totalValue = roleFiltered.reduce((s, i) => s + i.totalPrice, 0);
+    const totalQuantity = roleFiltered.reduce((s, i) => s + i.quantity, 0);
+    const lowStock = roleFiltered.filter((i) => i.quantity < 10).length;
     return { total, totalValue, totalQuantity, lowStock };
-  }, [items]);
+  }, [roleFiltered]);
 
   // Delete
   const handleDeleteClick = (item) => setDeleteTarget(item);
@@ -99,6 +117,13 @@ export default function InventoryPage() {
           <p className="text-sm text-gray-500 mt-1">
             {filtered.length} ዕቃዎች · {formatETB(stats.totalValue)} ጠቅላላ ዋጋ
           </p>
+          {/* ✅ Seller — branch display */}
+          {user?.role === 'seller' && userBranchId && (
+            <p className="text-xs text-brand font-medium mt-1 flex items-center gap-1">
+              <Building2 size={12} />
+              {typeof user.branch === 'object' ? user.branch.name : 'ቅርንጫፍ'}
+            </p>
+          )}
         </div>
         {canManage && (
           <Button onClick={() => { setEditingItem(null); setShowModal(true); }}>
@@ -128,14 +153,25 @@ export default function InventoryPage() {
               className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand text-sm"
             />
           </div>
-          <select
-            value={branchFilter}
-            onChange={(e) => setBranchFilter(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand text-sm bg-white"
-          >
-            <option value="all">ሁሉም ቅርንጫፎች</option>
-            {INVENTORY_BRANCHES.map((b) => <option key={b._id} value={b._id}>{b.name}</option>)}
-          </select>
+
+          {/* ✅ Branch filter — Admin ብቻ */}
+          {user?.role === 'admin' ? (
+            <select
+              value={branchFilter}
+              onChange={(e) => setBranchFilter(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand text-sm bg-white"
+            >
+              <option value="all">ሁሉም ቅርንጫፎች</option>
+              {INVENTORY_BRANCHES.map((b) => <option key={b._id} value={b._id}>{b.name}</option>)}
+            </select>
+          ) : (
+            <div className="px-3 py-2 rounded-lg bg-blue-50 text-blue-700 text-sm flex items-center gap-2">
+              <Building2 size={14} />
+              <span className="font-medium">
+                {user?.branch ? (typeof user.branch === 'object' ? user.branch.name : 'ቅርንጫፍ') : 'ቅርንጫፍ'}
+              </span>
+            </div>
+          )}
         </div>
       </Card>
 
@@ -165,6 +201,11 @@ export default function InventoryPage() {
                         <Package size={28} className="text-gray-400" />
                       </div>
                       <p className="text-gray-500 text-sm">ምንም ዕቃ አልተገኘም</p>
+                      {user?.role === 'seller' && userBranchId && (
+                        <p className="text-xs text-gray-400">
+                          ቅርንጫፍ: {typeof user.branch === 'object' ? user.branch.name : 'ቅርንጫፍ'}
+                        </p>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -218,6 +259,7 @@ export default function InventoryPage() {
           item={editingItem}
           onSave={handleSave}
           onCancel={() => { setShowModal(false); setEditingItem(null); }}
+          currentUser={user}
         />
       </Modal>
 
@@ -266,14 +308,21 @@ function StatCard({ label, value, icon: Icon, color }) {
   );
 }
 
-function ItemForm({ item, onSave, onCancel }) {
+function ItemForm({ item, onSave, onCancel, currentUser }) {
+  const isSeller = currentUser?.role === 'seller';
+
+  // ✅ Seller — branch ቋሚ
+  const defaultBranch = isSeller && currentUser?.branch
+    ? (typeof currentUser.branch === 'object' ? currentUser.branch._id : currentUser.branch)
+    : (item?.branch?._id || 'b1');
+
   const [form, setForm] = useState({
     itemType: item?.itemType || '',
     quantity: item?.quantity || 0,
     unitPrice: item?.unitPrice || 0,
     supplier: item?.supplier || '',
     description: item?.description || '',
-    branch: item?.branch?._id || 'b1',
+    branch: defaultBranch,
   });
 
   const onChange = (e) => {
@@ -323,11 +372,18 @@ function ItemForm({ item, onSave, onCancel }) {
         </select>
       </FormField>
 
+      {/* ✅ Seller — branch ቋሚ */}
       <FormField label="ቅርንጫፍ *">
-        <select name="branch" value={form.branch} onChange={onChange}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-brand text-sm">
-          {INVENTORY_BRANCHES.map((b) => <option key={b._id} value={b._id}>{b.name}</option>)}
-        </select>
+        {isSeller ? (
+          <div className="w-full px-3 py-2 rounded-lg bg-blue-50 text-blue-700 text-sm font-medium">
+            {typeof currentUser.branch === 'object' ? currentUser.branch?.name : 'ቅርንጫፍ'}
+          </div>
+        ) : (
+          <select name="branch" value={form.branch} onChange={onChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-brand text-sm">
+            {INVENTORY_BRANCHES.map((b) => <option key={b._id} value={b._id}>{b.name}</option>)}
+          </select>
+        )}
       </FormField>
 
       <FormField label="መግለጫ">

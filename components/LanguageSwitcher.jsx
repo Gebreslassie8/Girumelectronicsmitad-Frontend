@@ -19,12 +19,12 @@ export default function LanguageSwitcher() {
   };
 
   return (
-    <div className="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white p-1">
-      <Globe size={16} className="text-gray-500 ml-1" />
+    <div className="inline-flex items-center gap-0.5 rounded-lg border border-gray-300 bg-white p-0.5">
+      <Globe size={12} className="text-gray-500 ml-1" />
       <button
         onClick={() => switchLocale('am')}
         disabled={isPending}
-        className={`px-2 py-1 rounded text-xs font-medium transition ${
+        className={`px-2 py-1 rounded text-[10px] font-medium transition ${
           locale === 'am'
             ? 'bg-brand text-white'
             : 'text-gray-600 hover:bg-gray-100'
@@ -35,7 +35,7 @@ export default function LanguageSwitcher() {
       <button
         onClick={() => switchLocale('en')}
         disabled={isPending}
-        className={`px-2 py-1 rounded text-xs font-medium transition ${
+        className={`px-2 py-1 rounded text-[10px] font-medium transition ${
           locale === 'en'
             ? 'bg-brand text-white'
             : 'text-gray-600 hover:bg-gray-100'

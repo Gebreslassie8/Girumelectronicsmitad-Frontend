@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import { routing } from '@/i18n/routing';
 import QueryProvider from '@/components/providers/QueryProvider';
 import AuthProvider from '@/components/providers/AuthProvider';
+import ProfileProvider from '@/components/providers/ProfileProvider';
 import '../globals.css';
 
 export function generateStaticParams() {
@@ -21,8 +22,10 @@ export default async function LocaleLayout({ children, params }) {
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>
             <AuthProvider>
-              {children}
-              <Toaster position="top-right" />
+              <ProfileProvider>
+                {children}
+                <Toaster position="top-right" />
+              </ProfileProvider>
             </AuthProvider>
           </QueryProvider>
         </NextIntlClientProvider>

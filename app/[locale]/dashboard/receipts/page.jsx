@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import { useAuth } from '@/components/providers/AuthProvider';
 import {
   Plus, Search, FileText, CheckCircle2, Clock, AlertTriangle,
-  XCircle, User, Phone, Calendar, Building2, DollarSign,
+  User, Phone, Calendar, Building2, DollarSign,
   FileCheck, Eye, Printer,
 } from 'lucide-react';
 import { formatETB, formatDate } from '@/lib/utils';
@@ -31,9 +31,32 @@ export default function ReceiptsPage() {
 
   const canManage = user?.role === 'admin' || user?.role === 'seller';
 
+  // ✅ Get user's branch ID
+  const userBranchId = useMemo(() => {
+    if (!user?.branch) return null;
+    return typeof user.branch === 'object' ? user.branch._id : user.branch;
+  }, [user]);
+
+  // ✅ Role-based base data
+  const roleFiltered = useMemo(() => {
+    let result = receipts;
+
+    // Seller — የራሱ ቅርንጫፍ ብቻ
+    if (user?.role === 'seller' && userBranchId) {
+      result = result.filter((r) => r.branch?._id === userBranchId);
+    }
+
+    // ✅ Customer — የራሱ ደረሰኞች ብቻ
+    if (user?.role === 'customer') {
+      result = result.filter((r) => r.customerPhone === user.phone);
+    }
+
+    return result;
+  }, [receipts, user, userBranchId]);
+
   // Filter
   const filtered = useMemo(() => {
-    return receipts.filter((r) => {
+    return roleFiltered.filter((r) => {
       const q = search.toLowerCase();
       const matchSearch =
         r.receiptNumber.toLowerCase().includes(q) ||
@@ -44,17 +67,17 @@ export default function ReceiptsPage() {
       const matchBranch = branchFilter === 'all' || r.branch?._id === branchFilter;
       return matchSearch && matchStatus && matchBranch;
     });
-  }, [receipts, search, statusFilter, branchFilter]);
+  }, [roleFiltered, search, statusFilter, branchFilter]);
 
-  // Stats
+  // ✅ Stats — ሚና-ተኮር
   const stats = useMemo(() => {
-    const total = receipts.length;
-    const active = receipts.filter((r) => r.status === 'active').length;
-    const completed = receipts.filter((r) => r.status === 'completed').length;
-    const totalPrepaid = receipts.reduce((s, r) => s + r.prepayment, 0);
-    const totalRemaining = receipts.reduce((s, r) => s + r.remainingPayment, 0);
+    const total = roleFiltered.length;
+    const active = roleFiltered.filter((r) => r.status === 'active').length;
+    const completed = roleFiltered.filter((r) => r.status === 'completed').length;
+    const totalPrepaid = roleFiltered.reduce((s, r) => s + r.prepayment, 0);
+    const totalRemaining = roleFiltered.reduce((s, r) => s + r.remainingPayment, 0);
     return { total, active, completed, totalPrepaid, totalRemaining };
-  }, [receipts]);
+  }, [roleFiltered]);
 
   // Delete
   const handleDeleteClick = (receipt) => setDeleteTarget(receipt);
@@ -108,6 +131,20 @@ export default function ReceiptsPage() {
           <p className="text-sm text-gray-500 mt-1">
             {filtered.length} ደረሰኞች · {formatETB(stats.totalPrepaid)} የተከፈለ
           </p>
+          {/* ✅ Seller — branch display */}
+          {user?.role === 'seller' && userBranchId && (
+            <p className="text-xs text-brand font-medium mt-1 flex items-center gap-1">
+              <Building2 size={12} />
+              {typeof user.branch === 'object' ? user.branch.name : 'ቅርንጫፍ'}
+            </p>
+          )}
+          {/* ✅ Customer — "የእኔ ደረሰኞች" */}
+          {user?.role === 'customer' && (
+            <p className="text-xs text-brand font-medium mt-1 flex items-center gap-1">
+              <User size={12} />
+              የእኔ ደረሰኞች
+            </p>
+          )}
         </div>
         {canManage && (
           <Button onClick={() => { setEditingReceipt(null); setShowModal(true); }}>
@@ -147,14 +184,27 @@ export default function ReceiptsPage() {
               <option key={k} value={k}>{v.label}</option>
             ))}
           </select>
-          <select
-            value={branchFilter}
-            onChange={(e) => setBranchFilter(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand text-sm bg-white"
-          >
-            <option value="all">ሁሉም ቅርንጫፎች</option>
-            {RECEIPT_BRANCHES.map((b) => <option key={b._id} value={b._id}>{b.name}</option>)}
-          </select>
+
+          {/* ✅ Branch filter — Admin ብቻ */}
+          {user?.role === 'admin' ? (
+            <select
+              value={branchFilter}
+              onChange={(e) => setBranchFilter(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand text-sm bg-white"
+            >
+              <option value="all">ሁሉም ቅርንጫፎች</option>
+              {RECEIPT_BRANCHES.map((b) => <option key={b._id} value={b._id}>{b.name}</option>)}
+            </select>
+          ) : (
+            <div className="px-3 py-2 rounded-lg bg-blue-50 text-blue-700 text-sm flex items-center gap-2">
+              <Building2 size={14} />
+              <span className="font-medium truncate">
+                {user?.branch
+                  ? (typeof user.branch === 'object' ? user.branch.name : 'ቅርንጫፍ')
+                  : 'ሁሉም ቅርንጫፎች'}
+              </span>
+            </div>
+          )}
         </div>
       </Card>
 
@@ -183,7 +233,19 @@ export default function ReceiptsPage() {
                       <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
                         <FileText size={28} className="text-gray-400" />
                       </div>
-                      <p className="text-gray-500 text-sm">ምንም ደረሰኝ አልተገኘም</p>
+                      <p className="text-gray-500 text-sm">
+                        {user?.role === 'customer' ? 'የእርስዎ ደረሰኝ የለም' : 'ምንም ደረሰኝ አልተገኘም'}
+                      </p>
+                      {user?.role === 'customer' && (
+                        <p className="text-xs text-gray-400">
+                          ትዕዛዝ ካዘዙ በኋላ ደረሰኝ እዚህ ይታያል
+                        </p>
+                      )}
+                      {user?.role === 'seller' && userBranchId && (
+                        <p className="text-xs text-gray-400">
+                          ቅርንጫፍ: {typeof user.branch === 'object' ? user.branch.name : 'ቅርንጫፍ'}
+                        </p>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -248,6 +310,7 @@ export default function ReceiptsPage() {
           receipt={editingReceipt}
           onSave={handleSave}
           onCancel={() => { setShowModal(false); setEditingReceipt(null); }}
+          currentUser={user}
         />
       </Modal>
 
@@ -301,7 +364,13 @@ function StatCard({ label, value, icon: Icon, color }) {
   );
 }
 
-function ReceiptForm({ receipt, onSave, onCancel }) {
+function ReceiptForm({ receipt, onSave, onCancel, currentUser }) {
+  const isSeller = currentUser?.role === 'seller';
+
+  const defaultBranch = isSeller && currentUser?.branch
+    ? (typeof currentUser.branch === 'object' ? currentUser.branch._id : currentUser.branch)
+    : (receipt?.branch?._id || 'b1');
+
   const [form, setForm] = useState({
     orderNumber: receipt?.order?.orderNumber || '',
     productCode: receipt?.productCode || '',
@@ -314,7 +383,7 @@ function ReceiptForm({ receipt, onSave, onCancel }) {
     appointmentDate: receipt?.appointmentDate || '',
     note: receipt?.note || DEFAULT_RECEIPT_NOTE,
     status: receipt?.status || 'active',
-    branch: receipt?.branch?._id || 'b1',
+    branch: defaultBranch,
   });
 
   const onChange = (e) => {
@@ -337,7 +406,6 @@ function ReceiptForm({ receipt, onSave, onCancel }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {/* Customer */}
       <div>
         <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
           <User size={14} /> የደንበኛ መረጃ
@@ -356,7 +424,6 @@ function ReceiptForm({ receipt, onSave, onCancel }) {
         </div>
       </div>
 
-      {/* Order Info */}
       <div>
         <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
           <FileText size={14} /> የትዕዛዝ መረጃ
@@ -385,7 +452,6 @@ function ReceiptForm({ receipt, onSave, onCancel }) {
         </div>
       </div>
 
-      {/* Payment */}
       <div>
         <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
           <DollarSign size={14} /> ክፍያ
@@ -409,7 +475,6 @@ function ReceiptForm({ receipt, onSave, onCancel }) {
         </div>
       </div>
 
-      {/* Status + Branch */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <FormField label="ሁኔታ">
           <select name="status" value={form.status} onChange={onChange}
@@ -419,15 +484,22 @@ function ReceiptForm({ receipt, onSave, onCancel }) {
             ))}
           </select>
         </FormField>
+
+        {/* ✅ Seller — branch ቋሚ */}
         <FormField label="ቅርንጫፍ *">
-          <select name="branch" value={form.branch} onChange={onChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-brand text-sm">
-            {RECEIPT_BRANCHES.map((b) => <option key={b._id} value={b._id}>{b.name}</option>)}
-          </select>
+          {isSeller ? (
+            <div className="w-full px-3 py-2 rounded-lg bg-blue-50 text-blue-700 text-sm font-medium">
+              {typeof currentUser.branch === 'object' ? currentUser.branch?.name : 'ቅርንጫፍ'}
+            </div>
+          ) : (
+            <select name="branch" value={form.branch} onChange={onChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-brand text-sm">
+              {RECEIPT_BRANCHES.map((b) => <option key={b._id} value={b._id}>{b.name}</option>)}
+            </select>
+          )}
         </FormField>
       </div>
 
-      {/* Note */}
       <FormField label="ማስታወሻ">
         <textarea name="note" value={form.note} onChange={onChange} rows={3}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand text-sm resize-none"
@@ -461,7 +533,6 @@ function ReceiptView({ receipt, onPrint }) {
   const status = RECEIPT_STATUS[receipt.status];
   return (
     <div>
-      {/* Receipt-style header */}
       <div className="text-center pb-4 border-b-2 border-dashed border-gray-300">
         <h3 className="font-bold text-gray-800 text-lg">ግሩም ምጣድ</h3>
         <p className="text-xs text-gray-500">Grum Stove</p>
@@ -469,7 +540,6 @@ function ReceiptView({ receipt, onPrint }) {
         <p className="text-xs text-gray-400">0924 254 988 / 0903 284 493</p>
       </div>
 
-      {/* Receipt number */}
       <div className="flex items-center justify-between py-3 bg-gray-50 rounded-lg px-3 my-3">
         <div>
           <p className="text-xs text-gray-500">ደረሰኝ ቁጥር</p>
@@ -478,7 +548,6 @@ function ReceiptView({ receipt, onPrint }) {
         <Badge color={status.color}>{status.label}</Badge>
       </div>
 
-      {/* Customer */}
       <div className="space-y-2 text-sm">
         <div className="flex justify-between">
           <span className="text-gray-500">ደንበኛ:</span>
@@ -510,7 +579,6 @@ function ReceiptView({ receipt, onPrint }) {
         </div>
       </div>
 
-      {/* Payment breakdown */}
       <div className="mt-4 pt-4 border-t border-gray-200 space-y-2 text-sm">
         <div className="flex justify-between">
           <span className="text-gray-600">ጠቅላላ ዋጋ:</span>
@@ -526,22 +594,17 @@ function ReceiptView({ receipt, onPrint }) {
         </div>
       </div>
 
-      {/* Note */}
       {receipt.note && (
         <div className="mt-4 p-3 rounded-lg bg-yellow-50 border border-yellow-200">
-          <p className="text-xs text-yellow-800 leading-relaxed">
-            ⚠️ {receipt.note}
-          </p>
+          <p className="text-xs text-yellow-800 leading-relaxed">⚠️ {receipt.note}</p>
         </div>
       )}
 
-      {/* Footer */}
       <div className="mt-4 pt-3 border-t border-dashed border-gray-300 text-center">
         <p className="text-xs text-gray-500">ያዘጋጀው: {receipt.issuedBy?.fullName || '-'}</p>
         <p className="text-xs text-gray-400 mt-1">ቀን: {formatDate(receipt.createdAt)}</p>
       </div>
 
-      {/* Actions */}
       <div className="mt-4 flex gap-2">
         <button
           onClick={onPrint}

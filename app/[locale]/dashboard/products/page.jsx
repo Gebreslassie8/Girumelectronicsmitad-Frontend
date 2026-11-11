@@ -31,9 +31,27 @@ export default function ProductsPage() {
 
   const canManage = user?.role === 'admin' || user?.role === 'seller';
 
+  // ✅ Get user's branch ID
+  const userBranchId = useMemo(() => {
+    if (!user?.branch) return null;
+    return typeof user.branch === 'object' ? user.branch._id : user.branch;
+  }, [user]);
+
+  // ✅ Role-based base data
+  const roleFiltered = useMemo(() => {
+    let result = products;
+
+    // Seller — የራሱ ቅርንጫፍ ብቻ
+    if (user?.role === 'seller' && userBranchId) {
+      result = result.filter((p) => p.branch?._id === userBranchId);
+    }
+
+    return result;
+  }, [products, user, userBranchId]);
+
   // Filter
   const filtered = useMemo(() => {
-    return products.filter((p) => {
+    return roleFiltered.filter((p) => {
       const q = search.toLowerCase();
       const matchSearch =
         p.name.toLowerCase().includes(q) ||
@@ -43,16 +61,16 @@ export default function ProductsPage() {
       const matchBranch = branchFilter === 'all' || p.branch?._id === branchFilter;
       return matchSearch && matchCategory && matchStatus && matchBranch;
     });
-  }, [products, search, categoryFilter, statusFilter, branchFilter]);
+  }, [roleFiltered, search, categoryFilter, statusFilter, branchFilter]);
 
-  // Stats
+  // ✅ Stats — ሚና-ተኮር
   const stats = useMemo(() => {
-    const total = products.length;
-    const totalValue = products.reduce((s, p) => s + p.quantity * p.sellingPrice, 0);
-    const lowStock = products.filter((p) => p.quantity > 0 && p.quantity < 10).length;
-    const outOfStock = products.filter((p) => p.quantity === 0).length;
+    const total = roleFiltered.length;
+    const totalValue = roleFiltered.reduce((s, p) => s + p.quantity * p.sellingPrice, 0);
+    const lowStock = roleFiltered.filter((p) => p.quantity > 0 && p.quantity < 10).length;
+    const outOfStock = roleFiltered.filter((p) => p.quantity === 0).length;
     return { total, totalValue, lowStock, outOfStock };
-  }, [products]);
+  }, [roleFiltered]);
 
   // Delete
   const handleDeleteClick = (product) => setDeleteTarget(product);
@@ -101,6 +119,13 @@ export default function ProductsPage() {
           <p className="text-sm text-gray-500 mt-1">
             {filtered.length} ምርቶች · {formatETB(stats.totalValue)} ጠቅላላ ዋጋ
           </p>
+          {/* ✅ Seller — branch display */}
+          {user?.role === 'seller' && userBranchId && (
+            <p className="text-xs text-brand font-medium mt-1 flex items-center gap-1">
+              <Building2 size={12} />
+              {typeof user.branch === 'object' ? user.branch.name : 'ቅርንጫፍ'}
+            </p>
+          )}
         </div>
         {canManage && (
           <Button onClick={() => { setEditingProduct(null); setShowModal(true); }}>
@@ -148,14 +173,25 @@ export default function ProductsPage() {
               <option key={k} value={k}>{v.label}</option>
             ))}
           </select>
-          <select
-            value={branchFilter}
-            onChange={(e) => setBranchFilter(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand text-sm bg-white"
-          >
-            <option value="all">ሁሉም ቅርንጫፎች</option>
-            {PRODUCT_BRANCHES.map((b) => <option key={b._id} value={b._id}>{b.name}</option>)}
-          </select>
+
+          {/* ✅ Branch filter — Admin ብቻ */}
+          {user?.role === 'admin' ? (
+            <select
+              value={branchFilter}
+              onChange={(e) => setBranchFilter(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand text-sm bg-white"
+            >
+              <option value="all">ሁሉም ቅርንጫፎች</option>
+              {PRODUCT_BRANCHES.map((b) => <option key={b._id} value={b._id}>{b.name}</option>)}
+            </select>
+          ) : (
+            <div className="px-3 py-2 rounded-lg bg-blue-50 text-blue-700 text-sm flex items-center gap-2">
+              <Building2 size={14} />
+              <span className="font-medium truncate">
+                {user?.branch ? (typeof user.branch === 'object' ? user.branch.name : 'ቅርንጫፍ') : 'ቅርንጫፍ'}
+              </span>
+            </div>
+          )}
         </div>
       </Card>
 
@@ -185,6 +221,11 @@ export default function ProductsPage() {
                         <ShoppingCart size={28} className="text-gray-400" />
                       </div>
                       <p className="text-gray-500 text-sm">ምንም ምርት አልተገኘም</p>
+                      {user?.role === 'seller' && userBranchId && (
+                        <p className="text-xs text-gray-400">
+                          ቅርንጫፍ: {typeof user.branch === 'object' ? user.branch.name : 'ቅርንጫፍ'}
+                        </p>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -249,6 +290,7 @@ export default function ProductsPage() {
           product={editingProduct}
           onSave={handleSave}
           onCancel={() => { setShowModal(false); setEditingProduct(null); }}
+          currentUser={user}
         />
       </Modal>
 
@@ -297,7 +339,14 @@ function StatCard({ label, value, icon: Icon, color }) {
   );
 }
 
-function ProductForm({ product, onSave, onCancel }) {
+function ProductForm({ product, onSave, onCancel, currentUser }) {
+  const isSeller = currentUser?.role === 'seller';
+
+  // ✅ Seller — branch ቋሚ
+  const defaultBranch = isSeller && currentUser?.branch
+    ? (typeof currentUser.branch === 'object' ? currentUser.branch._id : currentUser.branch)
+    : (product?.branch?._id || 'b1');
+
   const [form, setForm] = useState({
     name: product?.name || '',
     category: product?.category || 'ምጣድ',
@@ -307,7 +356,7 @@ function ProductForm({ product, onSave, onCancel }) {
     unitPrice: product?.unitPrice || 0,
     sellingPrice: product?.sellingPrice || 0,
     status: product?.status || 'in_stock',
-    branch: product?.branch?._id || 'b1',
+    branch: defaultBranch,
   });
 
   const onChange = (e) => {
@@ -390,11 +439,18 @@ function ProductForm({ product, onSave, onCancel }) {
         </FormField>
       </div>
 
+      {/* ✅ Seller — branch ቋሚ */}
       <FormField label="ቅርንጫፍ *">
-        <select name="branch" value={form.branch} onChange={onChange}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-brand text-sm">
-          {PRODUCT_BRANCHES.map((b) => <option key={b._id} value={b._id}>{b.name}</option>)}
-        </select>
+        {isSeller ? (
+          <div className="w-full px-3 py-2 rounded-lg bg-blue-50 text-blue-700 text-sm font-medium">
+            {typeof currentUser.branch === 'object' ? currentUser.branch?.name : 'ቅርንጫፍ'}
+          </div>
+        ) : (
+          <select name="branch" value={form.branch} onChange={onChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-brand text-sm">
+            {PRODUCT_BRANCHES.map((b) => <option key={b._id} value={b._id}>{b.name}</option>)}
+          </select>
+        )}
       </FormField>
 
       <div className={`rounded-lg p-3 text-sm ${profit < 0 ? 'bg-red-50' : 'bg-green-50'}`}>

@@ -1,65 +1,13 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';                        // ✅ ADD
 import { Bell, ShoppingCart, AlertTriangle, CheckCircle2, Package, User } from 'lucide-react';
+import { notificationsStore } from '@/lib/notificationsStore';
 
 const NOTIFICATIONS = [
-  {
-    id: 1,
-    type: 'order',
-    icon: ShoppingCart,
-    title: 'አዲስ ትዕዛዝ',
-    desc: 'አበበ ከበደ — ምጣድ x 2',
-    time: '2 ደቂቃ በፊት',
-    color: 'bg-blue-50 text-blue-600',
-    unread: true,
-    link: '/dashboard/orders',
-  },
-  {
-    id: 2,
-    type: 'stock',
-    icon: AlertTriangle,
-    title: 'ዝቅተኛ ክምችት',
-    desc: 'ማገዶ ቆጣቢ ምጣድ — 5 pcs ቀሪ',
-    time: '25 ደቂቃ በፊት',
-    color: 'bg-yellow-50 text-yellow-600',
-    unread: true,
-    link: '/dashboard/products',
-  },
-  {
-    id: 3,
-    type: 'payment',
-    icon: CheckCircle2,
-    title: 'ክፍያ ተቀብሏል',
-    desc: 'ORD-2026-0012 — ETB 1,000',
-    time: '1 ሰዓት በፊት',
-    color: 'bg-green-50 text-green-600',
-    unread: false,
-    link: '/dashboard/orders',
-  },
-  {
-    id: 4,
-    type: 'receipt',
-    icon: Package,
-    title: 'ደረሰኝ ተፈጥሯል',
-    desc: 'RCP-2026-0008 — ሳራ ሀብታሙ',
-    time: '2 ሰዓት በፊት',
-    color: 'bg-purple-50 text-purple-600',
-    unread: false,
-    link: '/dashboard/receipts',
-  },
-  {
-    id: 5,
-    type: 'user',
-    icon: User,
-    title: 'አዲስ ሠራተኛ',
-    desc: 'ዳዊት ተስፋዬ — ሻጭ',
-    time: 'ትናንት',
-    color: 'bg-indigo-50 text-indigo-600',
-    unread: false,
-    link: '/dashboard/employees',
-  },
+  // ...your existing array — keep unchanged...
 ];
 
 export default function NotificationMenu({ onClose }) {
@@ -76,6 +24,11 @@ export default function NotificationMenu({ onClose }) {
 
   const unreadCount = NOTIFICATIONS.filter((n) => n.unread).length;
 
+  // Seed the global store so the header badge is correct even before visiting the full page
+  useEffect(() => {
+    notificationsStore.setUnread(unreadCount);
+  }, [unreadCount]);
+
   return (
     <div
       ref={ref}
@@ -91,12 +44,18 @@ export default function NotificationMenu({ onClose }) {
             {unreadCount} አዲስ ማሳወቂያ
           </p>
         </div>
-        <button className="text-xs text-brand font-medium hover:underline">
+
+        {/* ✅ was dead button → now navigates to the page */}
+        <Link
+          href="/dashboard/notifications"
+          onClick={onClose}
+          className="text-xs text-brand font-medium hover:underline"
+        >
           ሁሉንም አንብብ
-        </button>
+        </Link>
       </div>
 
-      {/* List */}
+      {/* List — unchanged */}
       <div className="max-h-96 overflow-y-auto divide-y divide-gray-50">
         {NOTIFICATIONS.map((n) => {
           const Icon = n.icon;
@@ -127,11 +86,15 @@ export default function NotificationMenu({ onClose }) {
         })}
       </div>
 
-      {/* Footer */}
+      {/* ✅ was dead button → now navigates to the page */}
       <div className="p-3 border-t border-gray-100 text-center">
-        <button className="text-sm text-brand font-medium hover:underline">
+        <Link
+          href="/dashboard/notifications"
+          onClick={onClose}
+          className="text-sm text-brand font-medium hover:underline"
+        >
           ሁሉንም ማሳወቂያዎች ይመልከቱ →
-        </button>
+        </Link>
       </div>
     </div>
   );

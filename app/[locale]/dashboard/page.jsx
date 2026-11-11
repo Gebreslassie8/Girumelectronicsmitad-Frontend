@@ -14,16 +14,18 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, BarChart, Bar,
 } from 'recharts';
+import { MOCK_ORDERS, ORDER_STATUS } from '@/lib/mockOrders';
+import { MOCK_PRODUCTS } from '@/lib/mockProducts';
 
 // ============ Mock Data ============
 const WEEKLY_SALES = [
-  { day: 'ሰኞ',  sales: 12500, orders: 4 },
-  { day: 'ማክሰ', sales: 18900, orders: 6 },
-  { day: 'ረቡዕ', sales: 15200, orders: 5 },
-  { day: 'ሐሙስ', sales: 22100, orders: 8 },
-  { day: 'አርብ', sales: 28500, orders: 10 },
-  { day: 'ቅዳሜ', sales: 34200, orders: 13 },
-  { day: 'እሁድ', sales: 19800, orders: 7 },
+  { day: 'ሰኞ',  sales: 12500 },
+  { day: 'ማክሰ', sales: 18900 },
+  { day: 'ረቡዕ', sales: 15200 },
+  { day: 'ሐሙስ', sales: 22100 },
+  { day: 'አርብ', sales: 28500 },
+  { day: 'ቅዳሜ', sales: 34200 },
+  { day: 'እሁድ', sales: 19800 },
 ];
 
 const MONTHLY_ORDERS = [
@@ -33,16 +35,6 @@ const MONTHLY_ORDERS = [
   { month: 'ዲሴም', orders: 55 },
   { month: 'ጃን',  orders: 89 },
   { month: 'ፌብ',  orders: 92 },
-];
-
-const RECENT_ORDERS = [
-  { id: 1, customer: 'አበበ ከበደ',  item: 'ምጣድ',    total: 2500, status: 'pending',       statusLabel: 'በመጠባበቅ',  color: 'yellow', branch: 'b1', date: '2026-11-10' },
-  { id: 2, customer: 'ሳራ ሀብታሙ',  item: 'ቆጣቢ',    total: 1800, status: 'in_production', statusLabel: 'በምርት ላይ',  color: 'blue',   branch: 'b1', date: '2026-11-10' },
-  { id: 3, customer: 'ዳዊት ተስፋዬ', item: 'ምጣድ',    total: 3200, status: 'ready',         statusLabel: 'ተዘጋጅቷል', color: 'green',  branch: 'b2', date: '2026-11-09' },
-  { id: 4, customer: 'ግርማ አለሙ',  item: 'አክሰሰሪ',  total: 950,  status: 'delivered',     statusLabel: 'ተላልፏል',   color: 'gray',   branch: 'b2', date: '2026-11-09' },
-  { id: 5, customer: 'ሜሮን ተስፋ',  item: 'ምጣድ',    total: 2700, status: 'pending',       statusLabel: 'በመጠባበቅ',  color: 'yellow', branch: 'b3', date: '2026-11-08' },
-  { id: 6, customer: 'ሰለሞን ገብረ', item: 'ምጣድ',    total: 3500, status: 'delivered',     statusLabel: 'ተላልፏል',   color: 'gray',   branch: 'b1', date: '2026-10-15' },
-  { id: 7, customer: 'ሀና ተስፋዬ',  item: 'ቆጣቢ',    total: 2100, status: 'delivered',     statusLabel: 'ተላልፏል',   color: 'gray',   branch: 'b3', date: '2026-09-20' },
 ];
 
 const LOW_STOCK = [
@@ -116,26 +108,51 @@ export default function DashboardPage() {
   const info = ROLE_INFO[role] || ROLE_INFO.customer;
   const RoleIcon = info.icon;
 
+  // Get user's branch ID
+  const userBranchId = useMemo(() => {
+    if (!user?.branch) return null;
+    return typeof user.branch === 'object' ? user.branch._id : user.branch;
+  }, [user]);
+
   // Filter state
   const [dateRange, setDateRange] = useState('week');
   const [branchFilter, setBranchFilter] = useState('all');
   const [showFilterPanel, setShowFilterPanel] = useState(false);
 
-  // Filtered orders
+  // ✅ Role-based orders
+  const roleFilteredOrders = useMemo(() => {
+    let result = MOCK_ORDERS;
+
+    // Seller — የራሱ ቅርንጫፍ ብቻ
+    if (role === 'seller' && userBranchId) {
+      result = result.filter((o) => o.branch?._id === userBranchId);
+    }
+
+    // Customer — የራሱ ትዕዛዞች ብቻ
+    if (role === 'customer') {
+      result = result.filter((o) => o.customerPhone === user?.phone);
+    }
+
+    return result;
+  }, [role, userBranchId, user]);
+
+  // ✅ Filtered orders (with date)
   const filteredOrders = useMemo(() => {
-    return RECENT_ORDERS.filter((o) => {
-      const matchDate = filterByDate(o.date, dateRange);
-      const matchBranch = branchFilter === 'all' || o.branch === branchFilter;
+    return roleFilteredOrders.filter((o) => {
+      const matchDate = filterByDate(o.createdAt, dateRange);
+      const matchBranch = branchFilter === 'all' || o.branch?._id === branchFilter;
       return matchDate && matchBranch;
     });
-  }, [dateRange, branchFilter]);
+  }, [roleFilteredOrders, dateRange, branchFilter]);
 
-  // Dynamic stats based on filters
+  // ✅ Dynamic stats based on role + filters
   const dynamicStats = useMemo(() => {
     const orderCount = filteredOrders.length;
-    const totalRevenue = filteredOrders.reduce((s, o) => s + o.total, 0);
+    const totalRevenue = filteredOrders.reduce((s, o) => s + o.totalPrice, 0);
     const totalProfit = Math.round(totalRevenue * 0.58);
     const pending = filteredOrders.filter((o) => o.status === 'pending').length;
+    const inProduction = filteredOrders.filter((o) => o.status === 'in_production').length;
+    const ready = filteredOrders.filter((o) => o.status === 'ready').length;
     const delivered = filteredOrders.filter((o) => o.status === 'delivered').length;
 
     if (role === 'admin') {
@@ -157,10 +174,27 @@ export default function DashboardPage() {
     return [
       { label: 'የእኔ ትዕዛዞች',  value: String(orderCount),                       icon: ShoppingCart, color: 'bg-blue-500' },
       { label: 'በመጠባበቅ',     value: String(pending),                          icon: Clock,        color: 'bg-yellow-500' },
-      { label: 'ተዘጋጅቷል',    value: String(filteredOrders.filter((o) => o.status === 'ready').length), icon: Package, color: 'bg-green-500' },
+      { label: 'ተዘጋጅቷል',    value: String(ready),                            icon: Package,      color: 'bg-green-500' },
       { label: 'ተላልፏል',      value: String(delivered),                        icon: CheckCircle2, color: 'bg-gray-500' },
     ];
   }, [filteredOrders, role]);
+
+  // ✅ Role-based low stock
+  const roleFilteredLowStock = useMemo(() => {
+    let result = MOCK_PRODUCTS.filter((p) => p.quantity < 10);
+
+    // Seller — የራሱ ቅርንጫፍ ብቻ
+    if (role === 'seller' && userBranchId) {
+      result = result.filter((p) => p.branch?._id === userBranchId);
+    }
+
+    // Customer — አያይም
+    if (role === 'customer') {
+      return [];
+    }
+
+    return result;
+  }, [role, userBranchId]);
 
   // Active filter count
   const activeFilters = (dateRange !== 'week' ? 1 : 0) + (branchFilter !== 'all' ? 1 : 0);
@@ -194,6 +228,13 @@ export default function DashboardPage() {
             <Calendar size={14} />
             <span>{new Date().toLocaleDateString('am-ET', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
           </div>
+          {/* ✅ Seller branch display */}
+          {role === 'seller' && userBranchId && (
+            <div className="mt-3 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur text-xs">
+              <Building2 size={12} />
+              {typeof user.branch === 'object' ? user.branch.name : 'ቅርንጫፍ'}
+            </div>
+          )}
         </div>
         <div className="absolute -bottom-16 -right-16 w-64 h-64 rounded-full bg-white/10" />
         <div className="absolute top-4 right-8 w-32 h-32 rounded-full bg-white/10" />
@@ -223,7 +264,8 @@ export default function DashboardPage() {
           {/* Desktop filters */}
           <div className="hidden sm:flex items-center gap-3 flex-wrap">
             <DateRangeFilter value={dateRange} onChange={setDateRange} />
-            {(role === 'admin' || role === 'seller') && (
+            {/* ✅ Branch filter — Admin ብቻ */}
+            {role === 'admin' && (
               <BranchFilter value={branchFilter} onChange={setBranchFilter} />
             )}
             {activeFilters > 0 && (
@@ -244,7 +286,7 @@ export default function DashboardPage() {
               <label className="block text-xs font-medium text-gray-600 mb-1.5">የቀን ክልል</label>
               <DateRangeFilter value={dateRange} onChange={setDateRange} full />
             </div>
-            {(role === 'admin' || role === 'seller') && (
+            {role === 'admin' && (
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1.5">ቅርንጫፍ</label>
                 <BranchFilter value={branchFilter} onChange={setBranchFilter} full />
@@ -386,40 +428,46 @@ export default function DashboardPage() {
             <div className="text-center py-12">
               <Filter size={40} className="mx-auto text-gray-300 mb-3" />
               <p className="text-gray-500 text-sm">ምንም ትዕዛዝ አልተገኘም</p>
+              {role === 'seller' && userBranchId && (
+                <p className="text-xs text-gray-400 mt-1">
+                  ቅርንጫፍ: {typeof user.branch === 'object' ? user.branch.name : 'ቅርንጫፍ'}
+                </p>
+              )}
               <button onClick={clearFilters} className="mt-2 text-xs text-brand hover:underline font-medium">
                 ማጣሪያዎችን አጽዳ
               </button>
             </div>
           ) : (
             <div className="space-y-2">
-              {filteredOrders.slice(0, 5).map((order) => (
-                <div
-                  key={order.id}
-                  className="flex items-center justify-between p-3 rounded-lg border border-gray-100 hover:bg-gray-50 transition cursor-pointer"
-                  onClick={() => router.push('/dashboard/orders')}
-                >
-                  <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <div className="w-9 h-9 rounded-full bg-brand/10 flex items-center justify-center flex-shrink-0">
-                      <span className="text-brand font-semibold text-xs">{order.customer.charAt(0)}</span>
+              {filteredOrders.slice(0, 5).map((order) => {
+                const status = ORDER_STATUS[order.status];
+                return (
+                  <div
+                    key={order._id}
+                    className="flex items-center justify-between p-3 rounded-lg border border-gray-100 hover:bg-gray-50 transition cursor-pointer"
+                    onClick={() => router.push('/dashboard/orders')}
+                  >
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <div className="w-9 h-9 rounded-full bg-brand/10 flex items-center justify-center flex-shrink-0">
+                        <span className="text-brand font-semibold text-xs">{order.customerName.charAt(0)}</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-800 truncate">{order.customerName}</p>
+                        <p className="text-xs text-gray-500">{order.itemType}</p>
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-800 truncate">{order.customer}</p>
-                      <p className="text-xs text-gray-500">{order.item}</p>
+                    <div className="text-right ml-3">
+                      <p className="text-sm font-bold text-gray-800">{order.totalPrice.toLocaleString()} ETB</p>
+                      <Badge color={status.color}>{status.label}</Badge>
                     </div>
                   </div>
-                  <div className="text-right ml-3">
-                    <p className="text-sm font-bold text-gray-800">{order.total.toLocaleString()} ETB</p>
-                    <span className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium bg-${order.color}-100 text-${order.color}-700`}>
-                      {order.statusLabel}
-                    </span>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
 
-        {showLowStock && (
+        {showLowStock && roleFilteredLowStock.length > 0 && (
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
             <div className="flex items-center justify-between mb-4">
               <div>
@@ -431,18 +479,18 @@ export default function DashboardPage() {
               </div>
             </div>
             <div className="space-y-3">
-              {LOW_STOCK.map((item, i) => (
+              {roleFilteredLowStock.map((item, i) => (
                 <div key={i} className="p-3 rounded-lg bg-yellow-50/50 border border-yellow-100">
                   <div className="flex items-center justify-between mb-1.5">
                     <p className="text-sm font-medium text-gray-800 truncate">{item.name}</p>
                     <span className={`text-xs font-bold ${item.quantity === 0 ? 'text-red-600' : 'text-yellow-600'}`}>
-                      {item.quantity}/{item.min}
+                      {item.quantity}/{10}
                     </span>
                   </div>
                   <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
                     <div
                       className={`h-full ${item.quantity === 0 ? 'bg-red-500' : 'bg-yellow-500'} transition-all`}
-                      style={{ width: `${Math.min((item.quantity / item.min) * 100, 100)}%` }}
+                      style={{ width: `${Math.min((item.quantity / 10) * 100, 100)}%` }}
                     />
                   </div>
                 </div>
@@ -544,5 +592,20 @@ function PermItem({ label, allowed }) {
         {label}
       </span>
     </div>
+  );
+}
+
+function Badge({ color, children }) {
+  const colors = {
+    yellow: 'bg-yellow-100 text-yellow-800',
+    blue:   'bg-blue-100 text-blue-800',
+    green:  'bg-green-100 text-green-800',
+    gray:   'bg-gray-100 text-gray-800',
+    red:    'bg-red-100 text-red-800',
+  };
+  return (
+    <span className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium ${colors[color] || colors.gray}`}>
+      {children}
+    </span>
   );
 }
